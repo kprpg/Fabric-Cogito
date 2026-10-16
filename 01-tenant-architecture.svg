@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1360" viewBox="0 0 1800 1360" role="img" aria-labelledby="title desc">
+  <title id="title">Fabric cross-tenant SQL access: logical tenant architecture</title>
+  <desc id="desc">A hospital guest tenant authenticates native identities to query a provider-owned Fabric Warehouse through a guest-specific TDS endpoint. Fabric manages local provider-side service principals and groups. Epic is only a conditional example of the provider. A separate management-plane strip shows consent, mapping, and connection-string handoff.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#245b78"/></marker>
+    <marker id="dasharrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#71639c"/></marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #17334a; }
+      .title { font-size: 33px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #496378; }
+      .section { font-size: 25px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #496378; }
+      .tiny { font-size: 14px; fill: #496378; }
+      .guest { fill: #edf5ff; stroke: #6799c7; stroke-width: 2; }
+      .provider { fill: #eaf7f4; stroke: #479887; stroke-width: 2; }
+      .card { fill: #fff; stroke: #a6bdcc; stroke-width: 1.5; }
+      .control { fill: #f2effa; stroke: #9d8ebf; stroke-width: 2; }
+      .line { fill: none; stroke: #245b78; stroke-width: 3; marker-end: url(#arrow); }
+      .dashed { fill: none; stroke: #71639c; stroke-width: 2.5; stroke-dasharray: 8 6; marker-end: url(#dasharrow); }
+    </style>
+  </defs>
+  <rect width="1800" height="1360" fill="#f7f9fc"/>
+  <text x="60" y="62" class="title">Microsoft Fabric cross-tenant SQL access</text>
+  <text x="60" y="97" class="subtitle">Logical ownership and access paths - guest home identities, provider-hosted analytical data</text>
+  <rect x="60" y="126" width="1680" height="58" rx="10" fill="#fff4d8" stroke="#c99b3e"/>
+  <text x="82" y="162" class="body">Epic = provider is a conditional reference design, not a verified Epic Cogito Cloud production topology.</text>
+
+  <rect x="60" y="224" width="690" height="658" rx="18" class="guest"/>
+  <text x="92" y="264" class="section">Guest tenant - hospital example</text>
+  <rect x="95" y="294" width="620" height="100" rx="12" class="card"/>
+  <text x="119" y="327" class="heading">Hospital's native Entra identities</text>
+  <text x="119" y="357" class="body">Users, applications, and approved reader groups</text>
+  <text x="119" y="381" class="small">Hospital owns membership and home-tenant MFA / CA</text>
+  <rect x="95" y="419" width="620" height="98" rx="12" class="card"/>
+  <text x="119" y="452" class="heading">Microsoft first-party enterprise applications</text>
+  <text x="119" y="482" class="body">Power BI Service and Azure SQL Database local SPs</text>
+  <text x="119" y="505" class="small">Not custom apps and not provider-side proxy identities</text>
+  <rect x="95" y="542" width="620" height="86" rx="12" class="card"/>
+  <text x="119" y="575" class="heading">Guest Global Administrator</text>
+  <text x="119" y="604" class="body">Consents to the specific provider tenant</text>
+  <rect x="95" y="675" width="620" height="160" rx="12" class="card"/>
+  <text x="119" y="710" class="heading">SSMS or approved Entra-aware TDS client</text>
+  <text x="119" y="742" class="body">Uses the provider-supplied guest-specific endpoint</text>
+  <text x="119" y="773" class="body">Authenticates with the guest's own organization</text>
+  <text x="119" y="807" class="small">No guest Fabric capacity is required by this access pattern</text>
+
+  <rect x="1050" y="224" width="690" height="658" rx="18" class="provider"/>
+  <text x="1082" y="264" class="section">Provider tenant - Epic only if confirmed</text>
+  <rect x="1085" y="294" width="620" height="126" rx="12" class="card"/>
+  <text x="1109" y="328" class="heading">Fabric-managed provider-local identities</text>
+  <text x="1109" y="359" class="body">Service principal for mapped guest user / app</text>
+  <text x="1109" y="389" class="body">Group for mapped guest group</text>
+  <rect x="1085" y="453" width="620" height="132" rx="12" class="card"/>
+  <text x="1109" y="488" class="heading">Provider owns data authorization</text>
+  <text x="1109" y="520" class="body">Pilot recommendation: item Read + curated-view SELECT</text>
+  <text x="1109" y="552" class="small">Avoid whole-workspace Viewer / broad ReadData by default</text>
+  <path d="M1395 585 V663" class="line"/>
+  <text x="1420" y="626" class="small">Item and SQL checks</text>
+  <rect x="1085" y="675" width="620" height="160" rx="12" class="card"/>
+  <text x="1109" y="710" class="heading">Warehouse / SQL analytics endpoint</text>
+  <text x="1109" y="742" class="body">Provider-hosted query engine and analytical data</text>
+  <text x="1109" y="773" class="body">Data remains provider-hosted in Fabric / OneLake</text>
+  <text x="1109" y="807" class="small">No B2B user invitation or OneLake shortcut in this flow</text>
+
+  <path d="M750 351 H1040" class="dashed"/>
+  <text x="778" y="315" class="small">Configured mapping</text>
+  <text x="785" y="337" class="tiny">Not a directory guest-user invite</text>
+  <path d="M750 727 H1040" class="line"/>
+  <text x="780" y="705" class="body">SQL requests - TDS 1433</text>
+  <path d="M1050 800 H760" class="line"/>
+  <text x="793" y="781" class="body">Authorized results</text>
+
+  <rect x="60" y="932" width="1680" height="265" rx="18" class="control"/>
+  <text x="92" y="972" class="section">Separate management plane - Microsoft-managed REST services</text>
+  <text x="92" y="1001" class="small">Consent is a tenant-trust operation, not a VPN, network tunnel, or grant to all provider data.</text>
+  <rect x="95" y="1025" width="450" height="136" rx="12" class="card"/>
+  <text x="117" y="1058" class="heading">1. Guest consents</text>
+  <text x="117" y="1087" class="body">Power BI consent endpoint</text>
+  <text x="117" y="1116" class="body">Body names provider tenant GUID</text>
+  <text x="117" y="1143" class="small">Guest Global Administrator</text>
+  <path d="M545 1092 H665" class="line"/>
+  <text x="559" y="1074" class="tiny">Prerequisite</text>
+  <rect x="675" y="1025" width="450" height="136" rx="12" class="card"/>
+  <text x="697" y="1058" class="heading">2. Provider maps and grants</text>
+  <text x="697" y="1087" class="body">Fabric admin mapping API</text>
+  <text x="697" y="1116" class="body">Fabric creates managed local objects</text>
+  <text x="697" y="1143" class="small">Provider grants item / SQL access</text>
+  <path d="M1125 1092 H1245" class="line"/>
+  <text x="1140" y="1074" class="tiny">Then handoff</text>
+  <rect x="1255" y="1025" width="450" height="136" rx="12" class="card"/>
+  <text x="1277" y="1058" class="heading">3. Provider supplies endpoint</text>
+  <text x="1277" y="1087" class="body">Connection-string API</text>
+  <text x="1277" y="1116" class="body">Request includes guestTenantId</text>
+  <text x="1277" y="1143" class="small">Guest must not guess the server name</text>
+
+  <text x="60" y="1235" class="small">Solid arrows: SQL or setup sequence. Dashed arrow: configured identity relationship, not a physical connection.</text>
+  <text x="60" y="1265" class="small">SQL results cross to the client; saving or importing them is a separately governed copy. Provider feature is limited preview.</text>
+  <a href="https://learn.microsoft.com/en-us/fabric/enterprise/cross-tenant-access"><text x="60" y="1300" class="tiny">Sources: Microsoft Learn - Cross-tenant access for guests</text></a>
+  <a href="https://learn.microsoft.com/en-us/fabric/enterprise/cross-tenant-access-for-providers"><text x="730" y="1300" class="tiny">Cross-tenant access for providers</text></a>
+  <text x="60" y="1326" class="tiny">See the accompanying research report for specific section citations, API samples, uncertainties, and deployment acceptance tests.</text>
+</svg>

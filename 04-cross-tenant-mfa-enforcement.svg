@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1580" viewBox="0 0 1900 1580" role="img" aria-labelledby="title desc">
+  <title id="title">Cross-tenant Fabric SQL: home MFA, provider authorization, and validation gaps</title>
+  <desc id="desc">The proposed BCH guest tenant owns human identity, groups, and applicable Conditional Access policies. An MFA-capable client connects over TDS to an Epic-hosted Fabric SQL endpoint only if Epic is the confirmed provider. Fabric-managed mappings authorize the provider-local identity. A separate provider external-MFA setting needs end-to-end validation. Classic B2B, local passwords or keys, and workload identities are distinct paths.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#245b78"/></marker>
+    <marker id="dasharrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#71639c"/></marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #17334a; }
+      .title { font-size: 33px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #496378; }
+      .section { font-size: 24px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #496378; }
+      .tiny { font-size: 14px; fill: #496378; }
+      .card { fill: #fff; stroke: #a6bdcc; stroke-width: 1.5; }
+      .line { fill: none; stroke: #245b78; stroke-width: 3; marker-end: url(#arrow); }
+      .dashed { fill: none; stroke: #71639c; stroke-width: 2.5; stroke-dasharray: 8 6; marker-end: url(#dasharrow); }
+    </style>
+  </defs>
+  <rect width="1900" height="1580" fill="#f7f9fc"/>
+  <text x="55" y="63" class="title">Cross-tenant SQL authorization and MFA: separate the enforcement layers</text>
+  <text x="55" y="99" class="subtitle">Fabric special mapping flow - not classic B2B guest-user trust, an AD forest trust, or OneLake shortcut sharing</text>
+  <rect x="55" y="126" width="1790" height="60" rx="10" fill="#fff4d8" stroke="#c99b3e"/>
+  <text x="78" y="163" class="body">Proposed roles: BCH = guest/home identity; Epic = provider/resource. Actual tenant ownership and feature use must be confirmed.</text>
+
+  <rect x="55" y="225" width="690" height="633" rx="18" fill="#edf5ff" stroke="#6799c7" stroke-width="2"/>
+  <text x="86" y="268" class="section">BCH home tenant - identity and policy</text>
+  <rect x="87" y="299" width="626" height="103" rx="12" class="card"/>
+  <text x="109" y="333" class="heading">Native human identity and approved source group</text>
+  <text x="109" y="365" class="body">BCH manages membership and home authentication</text>
+  <text x="109" y="390" class="small">Group mapping is not proof of literal cross-directory nesting</text>
+  <rect x="87" y="441" width="626" height="156" rx="12" class="card"/>
+  <text x="109" y="476" class="heading">Applicable Conditional Access and MFA</text>
+  <text x="109" y="510" class="body">Identify the actual target resource applications</text>
+  <text x="109" y="542" class="body">Require the approved MFA / device controls</text>
+  <text x="109" y="574" class="small">Prior MFA claim can satisfy access without a new prompt</text>
+  <path d="M400 402 V431" class="line"/>
+  <rect x="87" y="659" width="626" height="151" rx="12" class="card"/>
+  <text x="109" y="694" class="heading">SSMS / approved Entra-aware client</text>
+  <text x="109" y="727" class="body">Use Microsoft Entra MFA / interactive authentication</text>
+  <text x="109" y="759" class="body">Use provider-generated guest-specific SQL endpoint</text>
+  <text x="109" y="788" class="small">Entra password-only cannot satisfy required MFA</text>
+  <path d="M400 597 V649" class="line"/>
+
+  <rect x="1115" y="225" width="730" height="633" rx="18" fill="#eaf7f4" stroke="#479887" stroke-width="2"/>
+  <text x="1146" y="268" class="section">Epic provider tenant - only if confirmed</text>
+  <rect x="1147" y="299" width="666" height="111" rx="12" class="card"/>
+  <text x="1169" y="334" class="heading">Fabric-managed mapping objects</text>
+  <text x="1169" y="367" class="body">Local service principals / groups represent guest identities</text>
+  <text x="1169" y="396" class="small">Provider grants permissions; guest owns source membership</text>
+  <rect x="1147" y="452" width="666" height="152" rx="12" fill="#fff4d8" stroke="#c99b3e" stroke-width="1.5"/>
+  <text x="1169" y="487" class="heading">Separate provider outside-organization MFA setting</text>
+  <text x="1169" y="521" class="body">Documented default: off; organization-wide scope</text>
+  <text x="1169" y="553" class="small">Microsoft must confirm original-human claim handling</text>
+  <text x="1169" y="582" class="small">App-only behavior and session rechecks need validation</text>
+  <rect x="1147" y="659" width="666" height="151" rx="12" class="card"/>
+  <text x="1169" y="694" class="heading">Provider SQL endpoint and data permissions</text>
+  <text x="1169" y="727" class="body">Item Read permits connection; SQL grants limit data</text>
+  <text x="1169" y="759" class="body">Pilot: SELECT on approved view, deny unintended access</text>
+  <text x="1169" y="788" class="small">Home sign-in success is not permission to every table</text>
+  <path d="M1480 410 V442" class="dashed"/>
+  <path d="M1480 604 V649" class="line"/>
+
+  <path d="M745 731 H1105" class="line"/>
+  <text x="785" y="700" class="body">Entra-authenticated TDS 1433</text>
+  <text x="795" y="760" class="small">Original identity plus mapping</text>
+  <text x="783" y="785" class="tiny">Arrows abstract internal token processing</text>
+  <path d="M745 351 H1105" class="dashed"/>
+  <text x="795" y="320" class="body">Consent and principal mapping</text>
+  <text x="803" y="382" class="small">Not a network tunnel or B2B invite</text>
+
+  <rect x="55" y="900" width="1790" height="230" rx="16" fill="#f2effa" stroke="#9d8ebf" stroke-width="2"/>
+  <text x="85" y="941" class="section">Evidence gate - combine home authentication, provider authorization, and real allow / deny tests</text>
+  <text x="85" y="979" class="body">Home logs: Application versus Resource, policy result, Authentication Details, prior-MFA claim, required device control.</text>
+  <text x="85" y="1015" class="body">Provider: mapping and grants, external MFA setting, SP sign-ins, Purview events, approved view and denied base-table tests.</text>
+  <text x="85" y="1051" class="body">A provider service-principal sign-in does not prove original-human MFA. Report-only CA does not establish enforcement.</text>
+  <text x="85" y="1089" class="small">Generic Fabric CA baseline: Power BI Service, Azure Data Explorer, Azure SQL Database, Azure Storage, Azure Cosmos DB.</text>
+  <text x="85" y="1114" class="tiny">Verify actual per-client resource/audience coverage. Do not treat the Warehouse hostname as an automatically separate CA application.</text>
+
+  <rect x="55" y="1170" width="560" height="194" rx="14" class="card"/>
+  <text x="78" y="1206" class="heading">Classic Azure SQL B2B is different</text>
+  <text x="78" y="1240" class="body">Resource CA can require MFA.</text>
+  <text x="78" y="1272" class="body">Inbound trust can accept home MFA.</text>
+  <text x="78" y="1304" class="small">Without trust, resource MFA can be required.</text>
+  <text x="78" y="1337" class="small">Do not assume this is Fabric's mapping flow.</text>
+  <rect x="645" y="1170" width="570" height="194" rx="14" class="card"/>
+  <text x="668" y="1206" class="heading">Passwords, keys, and workloads differ</text>
+  <text x="668" y="1240" class="body">Fabric does not support native SQL logins.</text>
+  <text x="668" y="1272" class="body">Cosmos keys do not invoke Entra MFA.</text>
+  <text x="668" y="1304" class="small">Apps / managed identities have no human prompt.</text>
+  <text x="668" y="1337" class="small">Cosmos external-user path needs its own validation.</text>
+  <rect x="1245" y="1170" width="600" height="194" rx="14" fill="#fff4d8" stroke="#c99b3e" stroke-width="1.5"/>
+  <text x="1268" y="1206" class="heading">Existing SQL sessions are a separate gate</text>
+  <text x="1268" y="1240" class="body">Consent revoke: within a day, sessions unaffected.</text>
+  <text x="1268" y="1272" class="body">Fabric CAE session control is not supported.</text>
+  <text x="1268" y="1304" class="small">Mapping-delete open-session effect needs testing.</text>
+  <text x="1268" y="1337" class="small">Do not promise immediate session termination.</text>
+
+  <a href="https://learn.microsoft.com/en-us/fabric/enterprise/cross-tenant-access"><text x="55" y="1411" class="tiny">Sources: Fabric guest access</text></a>
+  <a href="https://learn.microsoft.com/en-us/fabric/enterprise/cross-tenant-access-for-providers"><text x="420" y="1411" class="tiny">Fabric provider access / MFA</text></a>
+  <a href="https://learn.microsoft.com/en-us/fabric/security/security-conditional-access"><text x="820" y="1411" class="tiny">Fabric Conditional Access</text></a>
+  <a href="https://learn.microsoft.com/en-us/entra/external-id/authentication-conditional-access"><text x="1200" y="1411" class="tiny">Entra external-user authentication</text></a>
+  <text x="55" y="1450" class="small">Companion report: Cross-Tenant-Authorization-and-MFA.md - verified facts, classic B2B comparison, Cosmos limits, and citations.</text>
+  <text x="55" y="1483" class="small">Workshop brief: Microsoft-Validation-Workshop-and-Test-Plan.md - role routing, written questions, pilot tests, and release gates.</text>
+  <text x="55" y="1525" class="tiny">Prepared October 15, 2026. Research-derived architecture, not deployment certification. No production sign-ins or data queries were performed.</text>
+</svg>

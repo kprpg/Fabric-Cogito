@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1450" viewBox="0 0 1800 1450" role="img" aria-labelledby="title desc">
+  <title id="title">Fabric cross-tenant SQL access: physical and service deployment boundaries</title>
+  <desc id="desc">The hospital client and firewall connect to Microsoft-managed regional Fabric SQL infrastructure. Guest and provider Entra directories are logical identity boundaries. An illustrative provider F-capacity ARM resource in an Azure subscription assigns capacity to the SaaS engine; it is not a customer SQL virtual machine. Private-only guest connectivity requires separate validation.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#245b78"/></marker>
+    <marker id="dasharrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#71639c"/></marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #17334a; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #496378; }
+      .section { font-size: 23px; font-weight: 700; }
+      .heading { font-size: 20px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #496378; }
+      .tiny { font-size: 14px; fill: #496378; }
+      .card { fill: #fff; stroke: #a6bdcc; stroke-width: 1.5; }
+      .line { fill: none; stroke: #245b78; stroke-width: 3; marker-end: url(#arrow); }
+      .dashed { fill: none; stroke: #71639c; stroke-width: 2.5; stroke-dasharray: 8 6; marker-end: url(#dasharrow); }
+    </style>
+  </defs>
+  <rect width="1800" height="1450" fill="#f7f9fc"/>
+  <text x="50" y="60" class="title">Physical deployment: identity boundary is not a network boundary</text>
+  <text x="50" y="96" class="subtitle">Provider F-capacity example plus Microsoft-operated SaaS - no invented Epic servers, regions, or ingestion pipeline</text>
+  <rect x="50" y="122" width="1700" height="58" rx="10" fill="#fff4d8" stroke="#c99b3e"/>
+  <text x="72" y="158" class="body">Conditional Epic provider model. Actual capacity SKU, region, tenant ownership, and private-network support need confirmation.</text>
+
+  <rect x="530" y="220" width="1220" height="134" rx="16" fill="#eef2fa" stroke="#8999b5" stroke-width="2"/>
+  <text x="556" y="252" class="section">Microsoft Entra service - two logical directories, not two customer datacenters</text>
+  <rect x="555" y="273" width="560" height="60" rx="10" class="card"/>
+  <text x="575" y="299" class="heading">Guest tenant</text>
+  <text x="575" y="322" class="small">Hospital's native identities, first-party SPs, MFA / CA</text>
+  <rect x="1140" y="273" width="585" height="60" rx="10" class="card"/>
+  <text x="1160" y="299" class="heading">Provider tenant</text>
+  <text x="1160" y="322" class="small">Fabric-managed local proxies; provider authorization</text>
+
+  <rect x="50" y="405" width="430" height="666" rx="16" fill="#edf5ff" stroke="#6799c7" stroke-width="2"/>
+  <text x="78" y="448" class="section">Guest organization network</text>
+  <rect x="80" y="482" width="370" height="158" rx="12" class="card"/>
+  <text x="100" y="519" class="heading">Approved client workstation</text>
+  <text x="100" y="553" class="body">SSMS / Entra-aware TDS client</text>
+  <text x="100" y="585" class="small">Own home-tenant sign-in</text>
+  <text x="100" y="613" class="small">Provider-supplied server and database</text>
+  <path d="M265 640 V716" class="line"/>
+  <text x="284" y="684" class="small">Client initiates connection</text>
+  <rect x="80" y="728" width="370" height="156" rx="12" class="card"/>
+  <text x="100" y="765" class="heading">Outbound firewall / egress</text>
+  <text x="100" y="799" class="body">MSSQL / TDS on TCP 1433</text>
+  <text x="100" y="830" class="small">Not HTTPS inspection on port 1433</text>
+  <text x="100" y="858" class="small">Use current Fabric endpoint guidance</text>
+  <text x="80" y="937" class="body">No hospital Fabric capacity required</text>
+  <text x="80" y="969" class="small">Query results can be sensitive.</text>
+  <text x="80" y="997" class="small">Local export / import is a separate copy.</text>
+  <text x="80" y="1035" class="small">Baseline assumes approved public TDS.</text>
+
+  <path d="M450 555 H502 V304 H545" class="line"/>
+  <text x="55" y="366" class="small">Home-tenant identity path: client to hospital Entra, not a provider B2B invitation.</text>
+
+  <rect x="530" y="405" width="1220" height="182" rx="16" fill="#f2effa" stroke="#9d8ebf" stroke-width="2"/>
+  <text x="556" y="444" class="section">Provider Azure subscription and resource group - illustrative F-capacity control resource</text>
+  <rect x="560" y="465" width="590" height="94" rx="12" class="card"/>
+  <text x="583" y="499" class="heading">Microsoft.Fabric/capacities</text>
+  <text x="583" y="532" class="body">Provider selects subscription, resource group, SKU, region</text>
+  <text x="1184" y="494" class="heading">This is NOT a customer SQL VM.</text>
+  <text x="1184" y="526" class="small">Warehouse compute and storage remain</text>
+  <text x="1184" y="551" class="small">inside the Microsoft-managed Fabric service.</text>
+
+  <rect x="530" y="678" width="1220" height="393" rx="16" fill="#eaf7f4" stroke="#479887" stroke-width="2"/>
+  <text x="556" y="719" class="section">Microsoft-operated Fabric SaaS - provider capacity region, actual location not established</text>
+  <text x="556" y="749" class="small">Provider workspace and item are logical resources. Underlying engines / storage are not customer-managed infrastructure.</text>
+  <rect x="570" y="787" width="330" height="175" rx="12" class="card"/>
+  <text x="592" y="823" class="heading">Guest-specific SQL endpoint</text>
+  <text x="592" y="855" class="body">Generated for guestTenantId</text>
+  <text x="592" y="887" class="small">Entra-authenticated TDS</text>
+  <text x="592" y="918" class="small">Mapped identity + item access</text>
+  <text x="592" y="945" class="small">No guessed DNS hostname</text>
+  <rect x="975" y="787" width="300" height="175" rx="12" class="card"/>
+  <text x="997" y="823" class="heading">Warehouse query engine</text>
+  <text x="997" y="856" class="body">Provider-hosted data item</text>
+  <text x="997" y="888" class="small">SQL object authorization</text>
+  <text x="997" y="919" class="small">Curated views / table grants</text>
+  <rect x="1350" y="802" width="350" height="145" fill="#fff" stroke="#a6bdcc" stroke-width="1.5"/>
+  <ellipse cx="1525" cy="802" rx="175" ry="21" fill="#fff" stroke="#a6bdcc" stroke-width="1.5"/>
+  <ellipse cx="1525" cy="947" rx="175" ry="21" fill="#fff" stroke="#a6bdcc" stroke-width="1.5"/>
+  <text x="1390" y="850" class="heading">Provider OneLake storage</text>
+  <text x="1390" y="884" class="small">Fabric-managed data substrate</text>
+  <text x="1390" y="916" class="small">No guest file access in this flow</text>
+  <path d="M450 820 H560" class="line"/>
+  <text x="468" y="797" class="tiny">TDS 1433</text>
+  <path d="M900 874 H965" class="line"/>
+  <path d="M1275 874 H1340" class="line"/>
+  <path d="M1125 587 V777" class="dashed"/>
+  <text x="1145" y="632" class="small">Regional capacity assignment</text>
+  <text x="1145" y="656" class="tiny">Logical control relationship, not a SQL network hop</text>
+  <text x="556" y="1010" class="small">Control / metadata services are Microsoft-managed; tenant home region can differ from capacity region.</text>
+  <text x="556" y="1040" class="small">Epic's source ingestion, customer-isolation implementation, and exact recovery topology are not documented here.</text>
+
+  <rect x="50" y="1120" width="1700" height="167" rx="14" fill="#fff4d8" stroke="#c99b3e" stroke-width="2"/>
+  <text x="76" y="1158" class="section">Private-only design is a deployment gate, not a line to assume</text>
+  <text x="76" y="1192" class="body">Connection-string APIs document privateLinkType=None or Workspace, including a guestTenantId + Workspace example.</text>
+  <text x="76" y="1224" class="body">General Private Link guidance restricts cross-tenant connectivity; end-to-end guest DNS / routing support is not resolved.</text>
+  <text x="76" y="1256" class="small">Do not invent VPN / peering or assume a bypass of Block Public Internet Access. Obtain provider / Microsoft confirmation and test.</text>
+
+  <text x="50" y="1324" class="small">Solid arrows: baseline client/network/data flow. Dashed arrow: regional SaaS allocation. Actual Epic physical topology is unverified.</text>
+  <a href="https://learn.microsoft.com/en-us/fabric/enterprise/cross-tenant-access-for-providers"><text x="50" y="1360" class="tiny">Sources: Fabric cross-tenant providers</text></a>
+  <a href="https://learn.microsoft.com/en-us/fabric/data-warehouse/connectivity"><text x="450" y="1360" class="tiny">Warehouse connectivity</text></a>
+  <a href="https://learn.microsoft.com/en-us/fabric/security/security-fundamentals"><text x="780" y="1360" class="tiny">Fabric security fundamentals</text></a>
+  <a href="https://learn.microsoft.com/en-us/fabric/enterprise/buy-capacity"><text x="1185" y="1360" class="tiny">Azure F-capacity provisioning</text></a>
+  <text x="50" y="1392" class="tiny">Private-path evidence and both connection-string API references are cited in Section 7 of the accompanying research report.</text>
+</svg>
