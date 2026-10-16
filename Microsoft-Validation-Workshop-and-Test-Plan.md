@@ -1,6 +1,6 @@
 # Microsoft Validation Workshop and Test Plan
 
-## Proposed BCH-to-Epic Fabric cross-tenant SQL access
+## Proposed ZAVA-to-Epic Fabric cross-tenant SQL access
 
 **Prepared:** October 15, 2026.  
 **Status:** Research-derived agenda and proposed acceptance plan. **Not Microsoft-approved; no tests executed.**  
@@ -11,7 +11,7 @@
 
 Obtain a joint Microsoft Fabric/Entra answer identifying the supported identity/group model, the actual Conditional Access target resources, the mechanism enforcing original-human MFA, and the session/offboarding limits. Agree on and execute a controlled, synthetic-data test plan before broad enablement.
 
-**Proposed roles, to confirm:** BCH is the guest/home identity tenant; Epic is the provider/resource tenant. Do not treat these labels or actual use of the Fabric special cross-tenant feature as verified.
+**Proposed roles, to confirm:** ZAVA is the guest/home identity tenant; Epic is the provider/resource tenant. Do not treat these labels or actual use of the Fabric special cross-tenant feature as verified.
 
 ## 2. Microsoft escalation route
 
@@ -27,9 +27,9 @@ No personal Microsoft contact names are asserted here. No ticket or meeting was 
 
 | Owner / attendee | Required contribution |
 |---|---|
-| BCH identity/Conditional Access administrator | Home policies, actual resource/audience evidence, MFA strength, device conditions, pilot user/group lifecycle. |
-| BCH client/network owner | SSMS/driver/application versions, auth configuration, egress, client/token/pooling behavior. |
-| BCH data/security owner | Required MFA assurance, approved data scope, evidence handling, and rollout authorization. |
+| ZAVA identity/Conditional Access administrator | Home policies, actual resource/audience evidence, MFA strength, device conditions, pilot user/group lifecycle. |
+| ZAVA client/network owner | SSMS/driver/application versions, auth configuration, egress, client/token/pooling behavior. |
+| ZAVA data/security owner | Required MFA assurance, approved data scope, evidence handling, and rollout authorization. |
 | Epic Fabric administrator / data owner | Feature enrollment, workspace/item IDs, mapping-generated objects, permissions, provider MFA setting, audit visibility. |
 | Epic identity owner | Provider-side object model and log evidence; distinguish managed projection objects from B2B guests. |
 | Both Microsoft account/support coordinators | Identify the correct specialists on each side; keep one linked case and decision record. |
@@ -113,7 +113,7 @@ Cosmos-native data-plane RBAC and local-authentication controls are documented; 
 
 **Design gate before consent/configuration**
 
-- Microsoft, BCH, and Epic agree on the test design and supported feature.
+- Microsoft, ZAVA, and Epic agree on the test design and supported feature.
 - Authorized administrators approve the provider-specific, tenant-level consent action.
 - The pilot has one isolated synthetic-data Warehouse, named test identities, and narrow permissions.
 - No production CA/MFA policy is disabled to obtain a successful connection.
@@ -133,13 +133,13 @@ All tests below are proposals, to be agreed with Microsoft and executed only in 
 | P01 | Before consent, attempt the approved pilot mapping. | Documented guest-not-consented `401`; if consent already exists, do not revoke a production relationship just to run this test. | API outcome and approved environment state. | Provider Fabric admin |
 | P02 | Use a pilot user with no approved mapping/membership. | No access to the pilot item; authentication success alone must not authorize it. | SQL result plus mapping/permission inventory. | Provider data owner |
 | P03 | Attempt native SQL Authentication against the Fabric endpoint. | Unsupported/denied. | Client auth mode and sanitized error; no real passwords needed. | Client owner |
-| P04 | With an applicable enforced MFA policy, use an approved password-only Entra test attempt. | Cannot satisfy the MFA requirement; no policy weakening. | Appropriate user sign-in category, actual resource, CA/authentication failure evidence. | BCH identity owner |
+| P04 | With an applicable enforced MFA policy, use an approved password-only Entra test attempt. | Cannot satisfy the MFA requirement; no policy weakening. | Appropriate user sign-in category, actual resource, CA/authentication failure evidence. | ZAVA identity owner |
 | P05 | Use approved MFA-capable interactive SQL client. | Human authenticates; applicable enforced policies succeed; intended view can be queried. | Resource/audience, CA results, Auth Details, SQL view test. | Joint |
-| P06 | Use a deliberately noncompliant pilot device when device compliance is required. | Denied by the intended device grant control, not an unrelated network problem. | Device info and specific CA policy failure. | BCH identity/client owners |
+| P06 | Use a deliberately noncompliant pilot device when device compliance is required. | Denied by the intended device grant control, not an unrelated network problem. | Device info and specific CA policy failure. | ZAVA identity/client owners |
 | P07 | Grant item `Read` without data-object permission. | Connect prerequisite may succeed; view/table read remains denied until explicitly granted. | Effective permissions and SQL result. | Provider data owner |
 | P08 | Add view-only `SELECT`; query allowed view and prohibited base table/unrelated item. | View succeeds; prohibited access denied. | Narrow grants, inherited-role check, positive/negative SQL outcomes. | Provider data owner |
 | P09 | Validate provider MFA setting behavior with Microsoft-approved pilot controls. | MFA-compliant human accepted; noncompliant case rejected for the intended reason. | Provider setting state, home evidence, provider result. | Provider + Microsoft |
-| P10 | Repeat connection with an already-MFA-satisfied session. | No new prompt may be legitimate; evidence still proves the required MFA/policy state. | Token/session state description without token capture, Auth Details. | BCH identity/client owners |
+| P10 | Repeat connection with an already-MFA-satisfied session. | No new prompt may be legitimate; evidence still proves the required MFA/policy state. | Token/session state description without token capture, Auth Details. | ZAVA identity/client owners |
 | P11 | Remove approved pilot group membership; test new physical connections separately from open/pooled sessions. | Documented hourly expansion behavior understood; no unbounded unexpected access. | UTC timestamps, membership/mapping state, new/open-session outcomes. | Joint |
 | P12 | Delete a pilot mapping. | New access stops as documented; stale GET metadata is not mistaken for working access. Existing-session behavior recorded separately. | Delete result, new connection, open-session outcome. | Provider admin |
 | P13 | Revoke pilot-only provider consent if safely isolated and approved. | New access lost within documented day-long behavior; existing-session caveat observed. | Guest audit, timing, new/open-session outcomes. | Guest admin |
@@ -188,7 +188,7 @@ Do not enable broad access until:
 - [ ] Existing-session, membership-removal, and revocation behavior meet approved risk requirements.
 - [ ] Network path and any private-only requirement are separately confirmed.
 - [ ] Microsoft findings, unresolved limitations, and business acceptance are recorded.
-- [ ] BCH and Epic identity/data owners approve rollout scope and support ownership.
+- [ ] ZAVA and Epic identity/data owners approve rollout scope and support ownership.
 
 **No-go conditions:** unclear MFA coverage; reliance on native SQL passwords or Cosmos keys where Entra enforcement is required; app-only reads incorrectly represented as human MFA; assumed literal group nesting; or an offboarding requirement that cannot be met by the observed session controls.
 

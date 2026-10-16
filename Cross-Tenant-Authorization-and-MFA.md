@@ -3,7 +3,7 @@
 ## Fabric SQL, Azure SQL, and Cosmos DB: what is enforced, where, and by whom
 
 **Research date:** October 15, 2026.  
-**Deployment labels:** BCH = proposed home/guest identity tenant; Epic = proposed provider/resource tenant. These labels reflect the proposed arrangement, not independently verified tenant ownership or configuration. BCH is not expanded to an organization name.
+**Deployment labels:** ZAVA = proposed home/guest identity tenant; Epic = proposed provider/resource tenant. These labels reflect the proposed arrangement, not independently verified tenant ownership or configuration. ZAVA is a fictional organization label.
 
 **Related deliverables:** [Microsoft workshop and test plan](./Microsoft-Validation-Workshop-and-Test-Plan.md), [MFA enforcement diagram](./04-cross-tenant-mfa-enforcement.svg), and [earlier Fabric architecture report](./Fabric-Cogito-Cross-Tenant-Access.md).
 
@@ -45,16 +45,16 @@ An MFA prompt is not necessarily displayed on every database connection. A suppo
 
 | Meeting assertion | Research assessment | Required confirmation |
 |---|---|---|
-| BCH remains the identity provider and manages membership. | **Supported for the generic Fabric feature.** Guest home-organization authentication and guest ownership of groups are explicit. | Verify BCH and Epic are actually using this feature, rather than B2B, a shortcut, a gateway, or another integration.[^fabric-guest][^fabric-provider] |
-| Epic nests BCH groups in its own Entra groups. | **Not established as literal cross-directory nesting.** Fabric documents a mapping API, groups/SPs representing guest principals, and hourly group expansion. | Obtain the exact source object, generated provider objects, any additional provider-owned grouping, and direct/transitive-membership behavior. Do not substitute cross-tenant synchronization documentation as proof.[^fabric-provider] |
+| ZAVA remains the identity provider and manages membership. | **Supported for the generic Fabric feature.** Guest home-organization authentication and guest ownership of groups are explicit. | Verify ZAVA and Epic are actually using this feature, rather than B2B, a shortcut, a gateway, or another integration.[^fabric-guest][^fabric-provider] |
+| Epic nests ZAVA groups in its own Entra groups. | **Not established as literal cross-directory nesting.** Fabric documents a mapping API, groups/SPs representing guest principals, and hourly group expansion. | Obtain the exact source object, generated provider objects, any additional provider-owned grouping, and direct/transitive-membership behavior. Do not substitute cross-tenant synchronization documentation as proof.[^fabric-provider] |
 | Access is one-way rather than a broad bidirectional trust. | **Supported as an access-entitlement description.** Consent names a provider; provider grants access to its data. | Confirm there is no separate reciprocal integration. SQL results return to the client, so "one-way" does not mean a network data diode.[^fabric-guest][^fabric-provider][^fabric-connectivity] |
 | B2B is necessarily a broad bidirectional trust. | **Correction:** B2B itself can be scoped by organization, users/groups, applications, and inbound/outbound settings. It is not an AD forest trust. | Identify the actual mechanism instead of using "B2B" as a synonym for unrestricted access.[^b2b-trust] |
 | The SQL endpoint might accept ordinary SQL username/password credentials. | **Resolved for Fabric's documented SQL endpoint:** native SQL Authentication is unsupported. Entra password authentication is a different flow and cannot satisfy MFA. | Confirm actual item type, client authentication option, and driver version.[^fabric-connectivity][^fabric-auth][^driver] |
-| MFA and device compliance will be enforced at BCH, then Epic authorizes the guest. | **Documented baseline for home CA/MFA, not proof of every control.** Device compliance must be an applicable enforced policy, not an assumed consequence of MFA. | Demonstrate actual target resource, policy result, device condition, and provider MFA behavior for each approved client.[^fabric-guest][^fabric-provider][^signin-details] |
-| The Epic SQL endpoint should appear in BCH CA as its own application. | **Not established.** The endpoint is a network/database target; CA normally targets resource service principals. | Identify the real resource applications from sign-in/audience evidence. Do not search only for a per-Warehouse hostname.[^resource-targeting][^ca-troubleshoot] |
+| MFA and device compliance will be enforced at ZAVA, then Epic authorizes the guest. | **Documented baseline for home CA/MFA, not proof of every control.** Device compliance must be an applicable enforced policy, not an assumed consequence of MFA. | Demonstrate actual target resource, policy result, device condition, and provider MFA behavior for each approved client.[^fabric-guest][^fabric-provider][^signin-details] |
+| The Epic SQL endpoint should appear in ZAVA CA as its own application. | **Not established.** The endpoint is a network/database target; CA normally targets resource service principals. | Identify the real resource applications from sign-in/audience evidence. Do not search only for a per-Warehouse hostname.[^resource-targeting][^ca-troubleshoot] |
 | Broad use should wait for Microsoft validation. | **Recommended release decision.** Documentation leaves deployment-specific questions open. | Require a written mechanism/resource-policy answer and passed non-PHI tests, not a verbal statement that MFA is enabled. |
 
-The assessment above applies documented platform behavior to a proposed deployment. It does not certify Epic's actual configuration or any BCH policy.
+The assessment above applies documented platform behavior to a proposed deployment. It does not certify Epic's actual configuration or any ZAVA policy.
 
 ## 3. Fabric-specific enforcement model
 
@@ -86,12 +86,12 @@ These are deliberately retained as Microsoft/provider validation questions, not 
 
 ### Editable enforcement diagram
 
-The proposed Epic/BCH labels are conditional. The arrows describe documented responsibilities, not a reverse-engineered token-exchange implementation.[^fabric-guest][^fabric-provider]
+The proposed Epic/ZAVA labels are conditional. The arrows describe documented responsibilities, not a reverse-engineered token-exchange implementation.[^fabric-guest][^fabric-provider]
 
 <!-- mermaid-checked: no \n, no em-dash/en-dash, no {} in labels, subgraphs are id["label"], arrows are -->|"label"|, all subgraphs closed by end, ids unique -->
 ```mermaid
 flowchart LR
-    subgraph mfaHome["BCH home tenant - proposed guest"]
+    subgraph mfaHome["ZAVA home tenant - proposed guest"]
         mfaUser["Native human identity and approved membership"]
         mfaCa["Home Entra sign-in and applicable CA policies"]
         mfaClient["MFA-capable SQL client"]
@@ -117,7 +117,7 @@ flowchart LR
     mfaItem -->|"Separate SQL authorization"| mfaView
 ```
 
-## 4. Which application should BCH target in Conditional Access?
+## 4. Which application should ZAVA target in Conditional Access?
 
 ### Do not equate a SQL hostname with a separate CA enterprise application
 
@@ -125,10 +125,10 @@ Conditional Access resource targeting works with Entra resource applications/ser
 
 | Object | Purpose | CA significance |
 |---|---|---|
-| SQL hostname / connection string | Routes a client to the intended endpoint/database. | Not evidence that this individual Warehouse is independently selectable as an application in BCH CA. |
+| SQL hostname / connection string | Routes a client to the intended endpoint/database. | Not evidence that this individual Warehouse is independently selectable as an application in ZAVA CA. |
 | Client application | Tool requesting a token, such as SSMS or a driver/application. | Appears as the application/client in sign-in evidence; normally not the same as the resource being protected. |
 | Resource application | API/service for which the token is requested. | The relevant CA resource/audience must be identified and covered. |
-| Provider-generated mapping SP | Local Epic-side authorization representation, if Epic is the provider. | Does not become a BCH CA target merely because it represents a BCH user. |
+| Provider-generated mapping SP | Local Epic-side authorization representation, if Epic is the provider. | Does not become a ZAVA CA target merely because it represents a ZAVA user. |
 
 The first row is a structural expectation rather than a product guarantee about this exact deployment. Validate it against actual resource/audience reporting; do not invent a Warehouse-specific CA app.[^resource-targeting][^ca-troubleshoot][^fabric-provider]
 
@@ -159,7 +159,7 @@ These are the feature's published prerequisites, **not proof that every client s
 
 ### Log-based resource discovery
 
-For each approved client, the BCH identity administrator should collect the matching sign-in evidence:
+For each approved client, the ZAVA identity administrator should collect the matching sign-in evidence:
 
 1. User, UTC time, sign-in type, home/resource tenant information, and status.
 2. **Application/client** and **Resource/resource ID** separately.
@@ -239,7 +239,7 @@ Management access and database data access are different planes. An administrato
 
 | Evidence source | What it can establish | What it does not establish alone |
 |---|---|---|
-| BCH human sign-in, Authentication Details and CA results | Original user authentication, resource, applicable policy, satisfied/failed MFA, relevant device controls. | Epic item/table permissions or whether an already-open TDS session was terminated. |
+| ZAVA human sign-in, Authentication Details and CA results | Original user authentication, resource, applicable policy, satisfied/failed MFA, relevant device controls. | Epic item/table permissions or whether an already-open TDS session was terminated. |
 | Epic-side service-principal sign-ins | Activity of the provider-managed representation described by the feature. | The original human's MFA strength or a guaranteed one-to-one cross-tenant correlation-ID match. |
 | Fabric mapping and permission inventory | Approved relationship and projected-object access. | Runtime MFA for the particular user request. |
 | Purview consent/mapping/token events | Administrative lifecycle and relevant Fabric activity. | The exact SQL rows accessed or the full human authentication chain. |
@@ -275,7 +275,7 @@ The consent, mapping, and permission operations are separate in the feature docu
 
 ### Gate B - before broad use
 
-Require written Microsoft/provider clarification of unresolved product behavior, approved enforce-mode CA evidence for the actual clients, passed authorization-denial tests, acceptable session/offboarding behavior, and joint BCH/Epic sign-off.
+Require written Microsoft/provider clarification of unresolved product behavior, approved enforce-mode CA evidence for the actual clients, passed authorization-denial tests, acceptable session/offboarding behavior, and joint ZAVA/Epic sign-off.
 
 The [workshop and test plan](./Microsoft-Validation-Workshop-and-Test-Plan.md) supplies the detailed agenda, evidence checklist, owner matrix, and test cases.
 
@@ -286,7 +286,7 @@ The [workshop and test plan](./Microsoft-Validation-Workshop-and-Test-Plan.md) s
 | Microsoft Fabric Data Warehouse / SQL analytics endpoint support or engineering | This specific cross-tenant feature, provider enablement, mapped principals, provider MFA setting, SQL sessions. |
 | Microsoft Entra Conditional Access / External Identities specialist | Correct resource targeting, human MFA/strength, device conditions, actual sign-in flow; distinction from B2B. |
 | Microsoft Cosmos DB for NoSQL identity/data-plane specialist, if Cosmos is in scope | Supported external principals, native data roles, token tenant/audience, keys versus Entra, client behavior. |
-| BCH Microsoft account/support coordination and BCH identity owner | Route the home-tenant CA/resource evidence and approve guest-side changes. |
+| ZAVA Microsoft account/support coordination and ZAVA identity owner | Route the home-tenant CA/resource evidence and approve guest-side changes. |
 | Epic Microsoft account/support coordination and Epic Fabric/identity owner | Route provider-side feature/MFA/authorization evidence and obtain product-group escalation. |
 
 Use each organization's existing Microsoft account/support route and the official Fabric/Power BI support-ticket process, subject to entitlement. Ask for a linked cross-workload design-validation case rather than two unrelated answers from separate teams. The provider article's limited-preview form is an enrollment route, not a guaranteed incident-escalation contact.[^support][^fabric-provider]
@@ -306,7 +306,7 @@ No named Microsoft individuals were identified, and no ticket, outreach, or meet
 | Classic B2B resource tenant can accept home MFA or require resource-tenant MFA, depending on inbound trust. | High | Explicit Entra authentication-flow documentation. |
 | Cosmos NoSQL supports Entra native data-plane RBAC and separately supports key authentication. | High | Cosmos-specific documentation. |
 | The desired external Cosmos human/client/CA path is supported and fully MFA-enforced. | Not certified | No deployment-specific evidence or explicit guest-path confirmation obtained. |
-| Actual Epic tenant ownership, enrollment, configuration, and BCH CA policies. | Not verified | No tenant access or private configuration was inspected. |
+| Actual Epic tenant ownership, enrollment, configuration, and ZAVA CA policies. | Not verified | No tenant access or private configuration was inspected. |
 
 ### Research scope and exclusions
 
@@ -332,7 +332,7 @@ MFA is evaluated through the human's Entra authentication and applicable policie
 
 ### Earlier architecture findings retained
 
-1. **Tenant roles are conditional.** Epic is the provider only if its tenant owns the Fabric analytical item; BCH is the guest/home tenant in the proposed model. Neither tenant ownership nor Epic's actual use of this feature was independently verified.[^fabric-guest][^fabric-provider]
+1. **Tenant roles are conditional.** Epic is the provider only if its tenant owns the Fabric analytical item; ZAVA is the guest/home tenant in the proposed model. Neither tenant ownership nor Epic's actual use of this feature was independently verified.[^fabric-guest][^fabric-provider]
 2. **This is an access relationship, not an AD forest trust.** The provider-specific consent and mapping workflow does not itself establish reciprocal access. Classic B2B can also be narrowly scoped and should not be described as inherently broad or bidirectional.[^fabric-guest][^fabric-provider][^b2b-trust]
 3. **Use "mapping/projection" rather than unverified "nesting."** Fabric documents provider-local groups/SPs and hourly group expansion, while the guest manages source membership. Literal cross-directory nesting and transitive-membership behavior still need confirmation.[^fabric-provider]
 4. **Separate authentication from data permission.** A successful home sign-in or mapping does not grant all SQL data. The proposed narrow pilot uses item `Read` and an approved-view `SELECT` grant; its detailed implementation remains in the [architecture report](./Fabric-Cogito-Cross-Tenant-Access.md).[^fabric-provider]
@@ -341,12 +341,12 @@ MFA is evaluated through the human's Entra authentication and applicable policie
 
 ### Conditional Access and release decision
 
-The generic Fabric CA baseline names **Power BI Service, Azure Data Explorer, Azure SQL Database, Azure Storage, and Azure Cosmos DB**. Do not assume that a Power BI-only policy covers SQL access or that an Epic Warehouse hostname becomes a separate BCH CA application. Confirm the actual resource/audience and enforce-mode policy results for each client.[^fabric-ca][^resource-targeting][^ca-troubleshoot]
+The generic Fabric CA baseline names **Power BI Service, Azure Data Explorer, Azure SQL Database, Azure Storage, and Azure Cosmos DB**. Do not assume that a Power BI-only policy covers SQL access or that an Epic Warehouse hostname becomes a separate ZAVA CA application. Confirm the actual resource/audience and enforce-mode policy results for each client.[^fabric-ca][^resource-targeting][^ca-troubleshoot]
 
-Before broad use, Microsoft, BCH, and Epic should jointly establish:
+Before broad use, Microsoft, ZAVA, and Epic should jointly establish:
 
 - The exact feature, tenant roles, group-object model, and supported human/workload identity paths.
-- Which resources BCH must target, and evidence that required MFA strength and device controls actually apply.
+- Which resources ZAVA must target, and evidence that required MFA strength and device controls actually apply.
 - What the provider MFA setting validates and how it treats app-only guest access.
 - Positive and negative SQL authorization outcomes, not merely a successful login.
 - New, pooled, and already-open session behavior during membership removal, mapping deletion, and consent revocation.

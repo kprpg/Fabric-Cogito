@@ -5,6 +5,11 @@ reference templates for consuming Epic-managed Fabric from a customer tenant.
 Epic's actual tenant ownership, feature enrollment, and supported client integration
 must be confirmed with Epic; these artifacts do not establish its production design.
 
+Customer and personal identifiers in these artifacts use the fictional placeholders
+**ZAVA** and **Sam Cook**. Data-center locations use **Site A** and **Site B**.
+PowerPoint and PDF deliverables are sanitized exports; their original
+account-identifying rights-management envelopes are not retained.
+
 ## Infrastructure combinations
 
 The two independent choices are **customer Azure only vs. customer-owned Fabric**
