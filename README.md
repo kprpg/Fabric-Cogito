@@ -42,6 +42,13 @@ automation or assumed success. No deployment or PHI processing has been performe
   distinction between special Fabric mappings, B2B, human MFA, and workload access.
 - [Microsoft validation workshop and test plan](Microsoft-Validation-Workshop-and-Test-Plan.md):
   proposed joint sign-off and synthetic-data acceptance tests.
+- [Editable one-page architecture](One-Page-Arch-Epic-Cogito-Fabric-2-Azure-Fabric.svg):
+  styled vector redraw of the [original PNG](One-Page-Arch-Epic-Cogito-Fabric-2-Azure-Fabric.png),
+  which is retained unchanged.
+- [Scout-style one-page architecture, v1](One-Page-Arch-Epic-Cogito-Fabric-2-Azure-Fabric-v1.svg):
+  alternate editable infographic inspired by the architecture-and-implementation
+  sample, with paired logical/private-access panels and a five-stage overview.
+  The original PNG and earlier SVG are retained unchanged.
 - Root-level SVG/PNG diagrams and the readable `cogito-cloud-connectivity (1).pdf`:
   conceptual public/private connectivity, customer Fabric, and hybrid network context.
 

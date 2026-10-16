@@ -1,0 +1,336 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1600" viewBox="0 0 2400 1600" role="img" aria-labelledby="title desc">
+  <title id="title">Epic Cogito Cloud to ZAVA Microsoft Fabric: one-page architecture</title>
+  <desc id="desc">Editable vector redraw of the companion PNG in a blue-header, pastel-panel infographic style. Epic clinical applications feed Chronicles and IRIS, then Epic-managed ingestion and Cogito Cloud on Microsoft Fabric. The Fabric SQL and TDS endpoint connects through the illustrated ZAVA Azure private access boundary to supported SQL ingestion in ZAVA Fabric. Raw Epic data and other enterprise data feed a curated customer model, semantic models, Power BI, and data science. Epic analytics remain in Epic. Identity, Conditional Access, hybrid connectivity, Private DNS, and Private Link are shown separately. This is a conceptual redraw, not a verified production deployment.</desc>
+  <defs>
+    <linearGradient id="section-header" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#102d5b"/>
+      <stop offset="1" stop-color="#225879"/>
+    </linearGradient>
+    <linearGradient id="fabric-teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#56e2c1"/>
+      <stop offset="1" stop-color="#008b7a"/>
+    </linearGradient>
+    <marker id="data-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#1466a4"/>
+    </marker>
+    <marker id="platform-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#718299"/>
+    </marker>
+    <marker id="auth-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#008b83"/>
+    </marker>
+    <symbol id="icon-clinical" viewBox="0 0 48 48">
+      <rect x="6" y="5" width="36" height="40" rx="6" fill="#e0f1ff" stroke="#1676bb" stroke-width="2"/>
+      <path d="M20 11 H28 V18 H35 V26 H28 V33 H20 V26 H13 V18 H20 Z" fill="#1676bb"/>
+      <path d="M15 39 H33" stroke="#1676bb" stroke-width="2"/>
+    </symbol>
+    <symbol id="icon-database" viewBox="0 0 48 48">
+      <path d="M7 12 V36 C7 46 41 46 41 36 V12" fill="#c9e5f7" stroke="#2373a7" stroke-width="2"/>
+      <ellipse cx="24" cy="12" rx="17" ry="8" fill="#318dcc"/>
+      <path d="M7 24 C7 34 41 34 41 24 M7 35 C7 45 41 45 41 35" fill="none" stroke="#2373a7" stroke-width="2"/>
+    </symbol>
+    <symbol id="icon-fabric" viewBox="0 0 48 48">
+      <path d="M10 8 L44 3 L38 23 L4 29 Z" fill="url(#fabric-teal)"/>
+      <path d="M8 25 L37 20 L31 38 L2 44 Z" fill="#008b7a"/>
+      <path d="M12 8 L30 5 L23 26 L4 29 Z" fill="#6ae6ca" opacity="0.72"/>
+    </symbol>
+    <symbol id="icon-ingestion" viewBox="0 0 48 48">
+      <rect x="3" y="5" width="13" height="13" rx="3" fill="#80c5ed"/>
+      <rect x="3" y="30" width="13" height="13" rx="3" fill="#80c5ed"/>
+      <rect x="33" y="17" width="13" height="14" rx="3" fill="#1277ad"/>
+      <path d="M16 11 H24 V24 H32 M16 37 H24 V24" fill="none" stroke="#1277ad" stroke-width="3"/>
+      <path d="M28 19 L34 24 L28 29" fill="none" stroke="#1277ad" stroke-width="3"/>
+    </symbol>
+    <symbol id="icon-identity" viewBox="0 0 48 48">
+      <path d="M24 3 L45 25 L24 45 L3 25 Z" fill="#168adb"/>
+      <path d="M24 3 V45 L3 25 Z" fill="#66cbef"/>
+      <path d="M24 14 L34 25 L24 34 L14 25 Z" fill="#edfaff"/>
+    </symbol>
+    <symbol id="icon-network" viewBox="0 0 48 48">
+      <path d="M24 10 V24 M10 36 L24 24 L38 36" fill="none" stroke="#1f86b8" stroke-width="3"/>
+      <rect x="17" y="2" width="14" height="14" rx="4" fill="#34abd4"/>
+      <rect x="2" y="31" width="14" height="14" rx="4" fill="#82c737"/>
+      <rect x="32" y="31" width="14" height="14" rx="4" fill="#82c737"/>
+    </symbol>
+    <symbol id="icon-link" viewBox="0 0 48 48">
+      <path d="M19 30 L14 35 A9 9 0 0 1 2 22 L13 11 A9 9 0 0 1 26 11 M29 18 L34 13 A9 9 0 0 1 46 26 L35 37 A9 9 0 0 1 22 37 M15 33 L33 15" transform="translate(0 -1)" fill="none" stroke="#a87909" stroke-width="5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-lock" viewBox="0 0 48 48">
+      <path d="M13 21 V14 A11 11 0 0 1 35 14 V21" fill="none" stroke="#007865" stroke-width="4"/>
+      <rect x="7" y="20" width="34" height="26" rx="5" fill="#008c76"/>
+      <circle cx="24" cy="31" r="4" fill="#fff"/>
+      <path d="M24 33 V39" stroke="#fff" stroke-width="3"/>
+    </symbol>
+    <symbol id="icon-dns" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" fill="#e6f5ff" stroke="#207ab4" stroke-width="2"/>
+      <ellipse cx="24" cy="24" rx="9" ry="20" fill="none" stroke="#207ab4" stroke-width="2"/>
+      <path d="M5 18 H43 M5 30 H43" stroke="#207ab4" stroke-width="2"/>
+    </symbol>
+    <symbol id="icon-chart" viewBox="0 0 48 48">
+      <rect x="5" y="28" width="9" height="17" rx="2" fill="#337bbd"/>
+      <rect x="19" y="17" width="9" height="28" rx="2" fill="#1676bb"/>
+      <rect x="33" y="4" width="9" height="41" rx="2" fill="#00569e"/>
+    </symbol>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #112c4e; }
+      .title { font-size: 42px; font-weight: 700; }
+      .subtitle { font-size: 24px; fill: #52667d; }
+      .section { font-size: 28px; font-weight: 700; fill: #fff; }
+      .zone-title { font-size: 24px; font-weight: 700; }
+      .zone-subtitle { font-size: 19px; fill: #496278; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .compact-heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #496278; }
+      .tiny { font-size: 17px; fill: #52667d; }
+      .center { text-anchor: middle; }
+      .card { fill: #fff; stroke: #bad1e2; stroke-width: 1.5; }
+      .data-path { fill: none; stroke: #1466a4; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#data-arrow); }
+      .platform-path { fill: none; stroke: #718299; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#platform-arrow); }
+      .auth-path { fill: none; stroke: #008b83; stroke-width: 3; stroke-dasharray: 7 6; stroke-linejoin: round; marker-end: url(#auth-arrow); }
+      .badge { fill: #fff; stroke: #1466a4; stroke-width: 2.5; }
+      .badge-label { font-size: 20px; font-weight: 700; fill: #1466a4; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="2400" height="1600" fill="#f7f9fc"/>
+  <text x="1200" y="68" class="title center">Epic Cogito Cloud to ZAVA Microsoft Fabric</text>
+  <text x="1200" y="112" class="subtitle center">One-page architecture | Managed source, private connectivity, governed analytics</text>
+
+  <g id="architecture" aria-label="Architecture and end-to-end data flow">
+    <rect x="32" y="154" width="2336" height="1120" rx="18" fill="#fff" stroke="#88b9de" stroke-width="1.5"/>
+    <path d="M50 154 H2350 Q2368 154 2368 172 V212 H32 V172 Q32 154 50 154 Z" fill="url(#section-header)"/>
+    <circle cx="68" cy="183" r="20" fill="#fff"/>
+    <text x="68" y="191" class="heading center">1</text>
+    <text x="104" y="193" class="section">Architecture and end-to-end data flow</text>
+    <text x="58" y="246" class="body">Operational EHR to Epic-managed Cogito, through the ZAVA Azure security boundary, into customer-owned Fabric analytics.</text>
+
+    <g id="epic-operational-ehr" aria-label="Epic operational EHR boundary">
+      <rect x="56" y="280" width="322" height="940" rx="18" fill="#eef7ff" stroke="#71b8e7" stroke-width="1.5"/>
+      <path d="M74 280 H360 Q378 280 378 298 V366 H56 V298 Q56 280 74 280 Z" fill="#d9edff"/>
+      <text x="80" y="321" class="zone-title">Epic operational EHR</text>
+      <text x="80" y="347" class="zone-subtitle">Source systems</text>
+
+      <g id="clinical-applications" data-node="true">
+        <rect x="80" y="406" width="274" height="190" rx="12" class="card"/>
+        <use href="#icon-clinical" x="193" y="422" width="48" height="48"/>
+        <text x="217" y="501" class="heading center">Epic clinical</text>
+        <text x="217" y="529" class="heading center">applications</text>
+        <text x="217" y="558" class="small center">Hyperspace / MyChart</text>
+        <text x="217" y="583" class="small center">Orders / Results</text>
+      </g>
+      <path d="M217 596 V660" class="platform-path"/>
+      <g id="operational-database" data-node="true">
+        <rect x="80" y="660" width="274" height="170" rx="12" class="card"/>
+        <use href="#icon-database" x="193" y="680" width="48" height="48"/>
+        <text x="217" y="759" class="heading center">Chronicles / IRIS</text>
+        <text x="217" y="789" class="small center">Operational EHR database</text>
+      </g>
+      <text x="217" y="922" class="small center">Epic-managed data</text>
+      <text x="217" y="948" class="small center">movement into Cogito Cloud</text>
+      <text x="217" y="1165" class="tiny center">Operational source boundary</text>
+    </g>
+
+    <g id="epic-managed-azure" aria-label="Epic-managed Azure environment">
+      <rect x="432" y="280" width="572" height="940" rx="18" fill="#edf8f1" stroke="#77b991" stroke-width="1.5"/>
+      <path d="M450 280 H986 Q1004 280 1004 298 V366 H432 V298 Q432 280 450 280 Z" fill="#d8efdf"/>
+      <text x="456" y="321" class="zone-title">Epic-managed Azure environment</text>
+      <text x="456" y="347" class="zone-subtitle">Managed ingestion and analytical platform</text>
+
+      <g id="epic-managed-ingestion" data-node="true">
+        <rect x="456" y="408" width="524" height="130" rx="12" class="card"/>
+        <use href="#icon-ingestion" x="480" y="446" width="48" height="48"/>
+        <text x="548" y="451" class="heading">Epic-managed</text>
+        <text x="548" y="480" class="heading">data ingestion</text>
+        <text x="548" y="509" class="small">Managed movement from operational EHR</text>
+      </g>
+
+      <g id="epic-cogito-cloud" aria-label="Epic Cogito Cloud boundary within Epic-managed Azure">
+        <rect x="444" y="558" width="548" height="650" rx="12" fill="#f5fcf7" stroke="#8ac39f" stroke-width="1.5"/>
+        <text x="460" y="580" class="tiny" style="fill:#247546;font-weight:700">EPIC COGITO CLOUD</text>
+        <g id="epic-microsoft-fabric" data-node="true">
+          <rect x="456" y="590" width="524" height="110" rx="12" class="card"/>
+          <use href="#icon-fabric" x="480" y="620" width="48" height="48"/>
+          <text x="548" y="635" class="heading">Microsoft Fabric</text>
+          <text x="548" y="666" class="body">Epic-managed platform</text>
+        </g>
+        <g id="cogito-cloud-data" data-node="true">
+          <rect x="456" y="752" width="524" height="130" rx="12" class="card"/>
+          <use href="#icon-database" x="480" y="793" width="48" height="48"/>
+          <text x="548" y="795" class="heading">Cogito Cloud data</text>
+          <text x="548" y="826" class="body">Lakehouse / Warehouse</text>
+          <text x="548" y="855" class="body">Epic data models</text>
+        </g>
+        <g id="fabric-sql-tds-endpoint" data-node="true">
+          <rect x="456" y="940" width="524" height="108" rx="12" fill="#fff5d7" stroke="#d5aa36" stroke-width="2"/>
+          <use href="#icon-lock" x="480" y="970" width="48" height="48"/>
+          <text x="548" y="981" class="heading">Fabric SQL / TDS endpoint</text>
+          <text x="548" y="1014" class="body">Supported customer access interface</text>
+        </g>
+        <g id="epic-analytics" data-node="true">
+          <rect x="456" y="1100" width="524" height="92" rx="12" class="card"/>
+          <use href="#icon-chart" x="480" y="1122" width="48" height="48"/>
+          <text x="548" y="1137" class="heading">Epic analytics</text>
+          <text x="548" y="1167" class="body">SlicerDicer / Dashboards / AI</text>
+        </g>
+      </g>
+      <path d="M718 538 V590" class="platform-path"/>
+      <path d="M718 700 V752" class="platform-path"/>
+      <path d="M718 882 V940" class="data-path"/>
+      <path d="M980 817 H992 V1146 H980" class="platform-path"/>
+    </g>
+
+    <g id="zava-azure-security-boundary" aria-label="ZAVA customer Azure and security boundary">
+      <rect x="1058" y="280" width="556" height="940" rx="18" fill="#fff8e9" stroke="#dfb34d" stroke-width="1.5"/>
+      <path d="M1076 280 H1596 Q1614 280 1614 298 V366 H1058 V298 Q1058 280 1076 280 Z" fill="#ffedc2"/>
+      <text x="1082" y="321" class="zone-title">ZAVA Azure / security boundary</text>
+      <text x="1082" y="347" class="zone-subtitle">Customer identities and network controls</text>
+
+      <g id="zava-entra-identities" data-node="true">
+        <rect x="1082" y="408" width="246" height="210" rx="12" class="card"/>
+        <use href="#icon-identity" x="1181" y="430" width="48" height="48"/>
+        <text x="1205" y="516" class="compact-heading center">Microsoft Entra ID</text>
+        <text x="1205" y="550" class="small center">ZAVA customer identities</text>
+        <text x="1205" y="582" class="tiny center">MFA + Conditional Access</text>
+      </g>
+      <g id="hybrid-connectivity" data-node="true">
+        <rect x="1344" y="408" width="246" height="210" rx="12" class="card"/>
+        <use href="#icon-network" x="1443" y="430" width="48" height="48"/>
+        <text x="1467" y="516" class="compact-heading center">ExpressRoute / VPN</text>
+        <text x="1467" y="550" class="small center">or approved</text>
+        <text x="1467" y="578" class="small center">connectivity</text>
+      </g>
+      <path d="M1205 618 V672 H1248 V734" class="auth-path"/>
+      <text x="1188" y="658" class="small" text-anchor="end" style="fill:#008b83">Authentication</text>
+      <path d="M1467 618 V672 H1424 V734" class="platform-path"/>
+      <g id="zava-vnet" data-node="true">
+        <rect x="1082" y="734" width="508" height="116" rx="12" class="card"/>
+        <use href="#icon-network" x="1106" y="767" width="48" height="48"/>
+        <text x="1174" y="781" class="heading">ZAVA Azure VNet</text>
+        <text x="1174" y="814" class="body">Customer network boundary</text>
+      </g>
+      <g id="private-dns" data-node="true">
+        <rect x="1082" y="922" width="508" height="104" rx="12" class="card"/>
+        <use href="#icon-dns" x="1106" y="950" width="48" height="48"/>
+        <text x="1174" y="967" class="heading">Private DNS</text>
+        <text x="1174" y="1000" class="body">Private name resolution</text>
+      </g>
+      <g id="private-endpoint" data-node="true">
+        <rect x="1082" y="1080" width="508" height="110" rx="12" fill="#fff1bf" stroke="#d5aa36" stroke-width="2"/>
+        <use href="#icon-link" x="1106" y="1110" width="48" height="48"/>
+        <text x="1174" y="1126" class="heading">Private endpoint</text>
+        <text x="1174" y="1160" class="body">Azure Private Link</text>
+      </g>
+      <path d="M1590 792 H1600 V1135 H1590" class="platform-path"/>
+      <path d="M1336 1026 V1080" class="platform-path"/>
+    </g>
+
+    <g id="zava-fabric-tenant" aria-label="ZAVA customer Microsoft Fabric tenant">
+      <rect x="1668" y="280" width="676" height="940" rx="18" fill="#f5efff" stroke="#b18bdf" stroke-width="1.5"/>
+      <path d="M1686 280 H2326 Q2344 280 2344 298 V366 H1668 V298 Q1668 280 1686 280 Z" fill="#e9dcfa"/>
+      <text x="1692" y="321" class="zone-title">ZAVA Microsoft Fabric tenant</text>
+      <text x="1692" y="347" class="zone-subtitle">Customer-owned ingestion, modeling, and analytics</text>
+
+      <g id="customer-sql-ingestion" data-node="true">
+        <rect x="1692" y="408" width="628" height="130" rx="12" class="card"/>
+        <use href="#icon-ingestion" x="1716" y="448" width="48" height="48"/>
+        <text x="1784" y="451" class="heading">Fabric Data Factory / Pipeline</text>
+        <text x="1784" y="484" class="body">or supported SQL ingestion</text>
+        <text x="1784" y="514" class="small">Ingest / copy into ZAVA Fabric</text>
+      </g>
+      <path d="M1842 538 V606" class="data-path"/>
+      <text x="1862" y="579" class="small">Ingest / copy</text>
+      <g id="raw-epic-cogito-data" data-node="true">
+        <rect x="1692" y="606" width="300" height="134" rx="12" fill="#e6f5e8" stroke="#89bc8a" stroke-width="1.5"/>
+        <use href="#icon-database" x="1820" y="621" width="44" height="44"/>
+        <text x="1842" y="692" class="compact-heading center">OneLake / Lakehouse</text>
+        <text x="1842" y="722" class="small center">Raw Epic / Cogito data</text>
+      </g>
+      <g id="other-enterprise-data" data-node="true">
+        <rect x="2024" y="606" width="296" height="134" rx="12" class="card"/>
+        <text x="2172" y="651" class="compact-heading center">Other enterprise data</text>
+        <text x="2172" y="686" class="small center">ERP / Claims / CRM</text>
+        <text x="2172" y="714" class="small center">IoT / Finance</text>
+      </g>
+      <path d="M1842 740 V804" class="data-path"/>
+      <path d="M2172 740 V804" class="data-path"/>
+      <g id="curated-customer-data-model" data-node="true">
+        <rect x="1692" y="804" width="628" height="130" rx="12" class="card"/>
+        <use href="#icon-fabric" x="1716" y="846" width="48" height="48"/>
+        <text x="1784" y="851" class="heading">Curated Lakehouse / Warehouse</text>
+        <text x="1784" y="885" class="body">ZAVA customer data model</text>
+      </g>
+      <path d="M1842 934 V992" class="data-path"/>
+      <path d="M2172 934 V992" class="data-path"/>
+      <g id="semantic-models" data-node="true">
+        <rect x="1692" y="992" width="300" height="92" rx="12" class="card"/>
+        <text x="1842" y="1030" class="heading center">Semantic models</text>
+        <text x="1842" y="1061" class="small center">Enterprise analytics layer</text>
+      </g>
+      <g id="data-science-ai" data-node="true">
+        <rect x="2024" y="992" width="296" height="92" rx="12" class="card"/>
+        <text x="2172" y="1030" class="heading center">Data science / AI</text>
+        <text x="2172" y="1061" class="small center">ZAVA use cases</text>
+      </g>
+      <path d="M1842 1084 V1124" class="data-path"/>
+      <g id="power-bi" data-node="true">
+        <rect x="1692" y="1124" width="300" height="72" rx="12" class="card"/>
+        <use href="#icon-chart" x="1710" y="1140" width="40" height="40"/>
+        <text x="1860" y="1155" class="compact-heading center">Power BI</text>
+        <text x="1860" y="1182" class="small center">Dashboards / Reports</text>
+      </g>
+    </g>
+
+    <g id="cross-boundary-data-paths" aria-label="Managed movement, private data path, and SQL TDS connectivity">
+      <path d="M354 745 H405 V473 H456" class="data-path"/>
+      <circle cx="405" cy="620" r="18" class="badge"/>
+      <text x="405" y="627" class="badge-label">1</text>
+      <path d="M980 994 H1030 V1135 H1082" class="data-path"/>
+      <circle cx="1030" cy="1080" r="18" class="badge"/>
+      <text x="1030" y="1087" class="badge-label">2</text>
+      <path d="M1590 1135 H1641 V473 H1692" class="data-path"/>
+      <circle cx="1641" cy="794" r="18" class="badge"/>
+      <text x="1641" y="801" class="badge-label">3</text>
+    </g>
+  </g>
+
+  <g id="flow-explanations" aria-label="Numbered data-path explanations">
+    <g id="managed-source-explanation">
+      <rect x="32" y="1300" width="754" height="220" rx="16" fill="#eef7ff" stroke="#a0c9e7" stroke-width="1.5"/>
+      <circle cx="70" cy="1341" r="20" fill="#1466a4"/>
+      <text x="70" y="1348" class="badge-label" style="fill:#fff">1</text>
+      <text x="106" y="1350" class="heading">Epic-managed source</text>
+      <text x="60" y="1400" class="body">Epic-managed ingestion carries operational EHR</text>
+      <text x="60" y="1432" class="body">data into Cogito Cloud and its Fabric SQL / TDS</text>
+      <text x="60" y="1464" class="body">endpoint. Epic analytics remain within Epic.</text>
+    </g>
+    <g id="private-access-explanation">
+      <rect x="808" y="1300" width="754" height="220" rx="16" fill="#fff8e9" stroke="#dfc77f" stroke-width="1.5"/>
+      <circle cx="846" cy="1341" r="20" fill="#1466a4"/>
+      <text x="846" y="1348" class="badge-label" style="fill:#fff">2</text>
+      <text x="882" y="1350" class="heading">Private access boundary</text>
+      <text x="836" y="1400" class="body">ZAVA identities use MFA + Conditional Access.</text>
+      <text x="836" y="1432" class="body">VNet, approved hybrid connectivity, Private DNS,</text>
+      <text x="836" y="1464" class="body">and a Private Endpoint form the illustrated path.</text>
+    </g>
+    <g id="customer-analytics-explanation">
+      <rect x="1584" y="1300" width="784" height="220" rx="16" fill="#f5efff" stroke="#c6ade5" stroke-width="1.5"/>
+      <circle cx="1622" cy="1341" r="20" fill="#1466a4"/>
+      <text x="1622" y="1348" class="badge-label" style="fill:#fff">3</text>
+      <text x="1658" y="1350" class="heading">Governed customer analytics</text>
+      <text x="1612" y="1400" class="body">SQL / TDS ingestion lands an Epic / Cogito copy in</text>
+      <text x="1612" y="1432" class="body">ZAVA Fabric, combines it with enterprise data,</text>
+      <text x="1612" y="1464" class="body">and feeds semantic models, Power BI, and AI.</text>
+    </g>
+  </g>
+
+  <g id="legend-and-scope" aria-label="Legend and conceptual scope">
+    <path d="M48 1562 H104" class="data-path"/>
+    <text x="118" y="1568" class="tiny">Data / ingestion path</text>
+    <path d="M322 1562 H378" class="platform-path"/>
+    <text x="392" y="1568" class="tiny">Platform / network flow</text>
+    <path d="M618 1562 H674" class="auth-path"/>
+    <text x="688" y="1568" class="tiny">Authentication</text>
+    <text x="2350" y="1568" class="tiny" text-anchor="end">Conceptual redraw of the original PNG. Validate provider support, tenant roles, and ingestion capabilities before deployment.</text>
+  </g>
+</svg>

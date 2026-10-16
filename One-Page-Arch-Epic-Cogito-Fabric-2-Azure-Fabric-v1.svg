@@ -1,0 +1,517 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1600" viewBox="0 0 2400 1600" fill="#092451" role="img" aria-labelledby="title desc">
+  <title id="title">Epic Cogito Cloud + ZAVA Fabric: cross-tenant architecture and implementation overview, version 1</title>
+  <desc id="desc">Native editable vector infographic inspired by the supplied architecture-and-implementation sample. Panel 1 preserves the original Epic operational EHR, Epic-managed Azure and Cogito Cloud, and ZAVA Fabric analytical data flow. Panel 2 expands the original ZAVA Azure security boundary with Entra identities, Conditional Access, hybrid connectivity, a virtual network, Private DNS, and a Private Endpoint. Panel 3 summarizes those same components in five implementation stages. All 19 original components are represented. Original PNG and earlier SVG are retained. This is a conceptual redraw, not a verified deployment or a claim that Microsoft Copilot generated this file.</desc>
+  <defs>
+    <linearGradient id="blue-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0759ce"/><stop offset="1" stop-color="#06489c"/>
+    </linearGradient>
+    <linearGradient id="teal-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#008470"/><stop offset="1" stop-color="#00634f"/>
+    </linearGradient>
+    <linearGradient id="purple-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6331b7"/><stop offset="1" stop-color="#4c338d"/>
+    </linearGradient>
+    <linearGradient id="epic-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e81765"/><stop offset="1" stop-color="#c61b51"/>
+    </linearGradient>
+    <linearGradient id="gold-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a58600"/><stop offset="1" stop-color="#8c7400"/>
+    </linearGradient>
+    <linearGradient id="cyan-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0098b7"/><stop offset="1" stop-color="#007c9c"/>
+    </linearGradient>
+    <linearGradient id="blue-wash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e6f3ff"/><stop offset="1" stop-color="#f4faff"/>
+    </linearGradient>
+    <linearGradient id="purple-wash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eee5fb"/><stop offset="1" stop-color="#faf7ff"/>
+    </linearGradient>
+    <linearGradient id="green-wash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#def2e9"/><stop offset="1" stop-color="#f6fcf9"/>
+    </linearGradient>
+    <linearGradient id="fabric-light" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a8ffe1"/><stop offset="0.5" stop-color="#42d8af"/><stop offset="1" stop-color="#00977f"/>
+    </linearGradient>
+    <linearGradient id="fabric-dark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00a18c"/><stop offset="1" stop-color="#005c57"/>
+    </linearGradient>
+    <linearGradient id="azure-facet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#56d8f4"/><stop offset="1" stop-color="#0061cc"/>
+    </linearGradient>
+    <filter id="card-shadow" x="-10%" y="-15%" width="120%" height="135%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#29496a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="data-arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#0866b5"/>
+    </marker>
+    <marker id="private-arrow" markerWidth="11" markerHeight="11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L11 5.5 L0 11 Z" fill="#00966d"/>
+    </marker>
+    <marker id="auth-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#0a9aa1"/>
+    </marker>
+    <symbol id="fabric" viewBox="0 0 64 64">
+      <path d="M17 11 Q18 8 23 7 L59 2 L51 25 L11 32 Z" fill="url(#fabric-light)"/>
+      <path d="M11 30 L51 23 L44 43 L4 50 Z" fill="#00a68e"/>
+      <path d="M5 47 L44 40 L39 57 L9 63 Q0 64 3 55 Z" fill="url(#fabric-dark)"/>
+      <path d="M18 10 L34 7 L26 30 L11 32 Z" fill="#a2f5d4" opacity="0.7"/>
+      <path d="M11 32 L27 29 L20 48 L4 50 Z" fill="#006f6c" opacity="0.5"/>
+    </symbol>
+    <symbol id="entra" viewBox="0 0 64 64">
+      <path d="M32 2 L62 33 L32 62 L2 33 Z" fill="url(#azure-facet)"/>
+      <path d="M32 2 L32 23 L12 43 L2 33 Z" fill="#59d7ef"/>
+      <path d="M32 23 L48 39 L32 54 L16 39 Z" fill="#d0f4ff"/>
+      <path d="M32 2 L62 33 L48 39 L32 23 Z" fill="#0078c9"/>
+      <path d="M32 54 L48 39 L62 33 L32 62 Z" fill="#074999"/>
+    </symbol>
+    <symbol id="database" viewBox="0 0 64 64">
+      <path d="M10 13 V49 C10 64 54 64 54 49 V13" fill="#258ac5"/>
+      <ellipse cx="32" cy="13" rx="22" ry="10" fill="#69c8ec"/>
+      <path d="M10 29 C10 44 54 44 54 29 M10 46 C10 61 54 61 54 46" fill="none" stroke="#a4e5fa" stroke-width="2"/>
+      <ellipse cx="32" cy="13" rx="16" ry="5" fill="#d9f6ff" opacity="0.6"/>
+    </symbol>
+    <symbol id="clinical" viewBox="0 0 64 64">
+      <rect x="10" y="8" width="44" height="50" rx="8" fill="#e6f7ff" stroke="#0876bb" stroke-width="3"/>
+      <path d="M27 16 H37 V26 H47 V36 H37 V46 H27 V36 H17 V26 H27 Z" fill="#0f91d1"/>
+      <path d="M23 53 H41" stroke="#0876bb" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="pipeline" viewBox="0 0 64 64">
+      <rect x="3" y="7" width="18" height="18" rx="4" fill="#76c9ee"/>
+      <rect x="3" y="40" width="18" height="18" rx="4" fill="#76c9ee"/>
+      <rect x="43" y="24" width="18" height="18" rx="4" fill="#0077b9"/>
+      <path d="M21 16 H31 V33 H43 M21 49 H31 V33" fill="none" stroke="#0077b9" stroke-width="4"/>
+      <path d="M37 27 L44 33 L37 39" fill="none" stroke="#0077b9" stroke-width="3"/>
+    </symbol>
+    <symbol id="network" viewBox="0 0 64 64">
+      <path d="M32 14 V32 M14 49 L32 32 L50 49" fill="none" stroke="#0a90c5" stroke-width="4"/>
+      <circle cx="32" cy="10" r="9" fill="#0096d3"/>
+      <circle cx="12" cy="51" r="9" fill="#80c52a"/>
+      <circle cx="52" cy="51" r="9" fill="#80c52a"/>
+      <circle cx="32" cy="32" r="7" fill="#57c8e7"/>
+    </symbol>
+    <symbol id="endpoint" viewBox="0 0 64 64">
+      <path d="M19 13 L4 32 L19 51 M45 13 L60 32 L45 51" fill="none" stroke="#008fc9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M32 13 V51" stroke="#0a97ca" stroke-width="4"/>
+      <circle cx="32" cy="32" r="10" fill="#84c92b"/>
+    </symbol>
+    <symbol id="dns" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="27" fill="#e2f4ff" stroke="#0079c7" stroke-width="3"/>
+      <ellipse cx="32" cy="32" rx="13" ry="27" fill="none" stroke="#0079c7" stroke-width="2"/>
+      <path d="M7 22 H57 M7 42 H57" stroke="#0079c7" stroke-width="2"/>
+    </symbol>
+    <symbol id="shield" viewBox="0 0 64 64">
+      <path d="M32 3 Q43 11 57 11 V29 Q57 49 32 62 Q7 49 7 29 V11 Q21 11 32 3 Z" fill="#075ba8"/>
+      <path d="M20 32 L29 41 L46 22" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="lock" viewBox="0 0 64 64">
+      <path d="M17 29 V19 A15 15 0 0 1 47 19 V29" fill="none" stroke="#006d83" stroke-width="5"/>
+      <rect x="9" y="26" width="46" height="35" rx="7" fill="#008ba0"/>
+      <circle cx="32" cy="40" r="5" fill="#fff"/>
+      <path d="M32 43 V51" stroke="#fff" stroke-width="4"/>
+    </symbol>
+    <symbol id="chart" viewBox="0 0 64 64">
+      <rect x="5" y="37" width="12" height="24" rx="3" fill="#37a6e4"/>
+      <rect x="25" y="23" width="12" height="38" rx="3" fill="#087bc5"/>
+      <rect x="45" y="4" width="12" height="57" rx="3" fill="#03559d"/>
+    </symbol>
+    <symbol id="ai" viewBox="0 0 64 64">
+      <path d="M32 4 L40 24 L60 32 L40 40 L32 60 L24 40 L4 32 L24 24 Z" fill="#7254c5"/>
+      <path d="M51 1 L54 9 L62 12 L54 15 L51 23 L48 15 L40 12 L48 9 Z" fill="#b298eb"/>
+      <path d="M32 19 L37 32 L32 45 L27 32 Z" fill="#e4d5ff"/>
+    </symbol>
+    <symbol id="private-cloud" viewBox="0 0 240 170">
+      <path d="M54 144 H194 C244 144 251 80 209 67 C207 20 151 6 126 38 C99 12 57 31 55 65 C5 57 -9 127 30 141 Q40 145 54 144 Z" fill="#f1fbff" stroke="#075b8c" stroke-width="3"/>
+      <path d="M56 137 H192" stroke="#bce8f4" stroke-width="5" stroke-linecap="round"/>
+      <path d="M103 81 V69 A17 17 0 0 1 137 69 V81" fill="none" stroke="#007fa8" stroke-width="5"/>
+      <rect x="94" y="78" width="52" height="43" rx="7" fill="#008fb7"/>
+      <circle cx="120" cy="93" r="5" fill="#fff"/>
+      <path d="M120 96 V106" stroke="#fff" stroke-width="4"/>
+    </symbol>
+    <symbol id="check" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="#25a94c"/>
+      <path d="M17 32 L28 43 L48 21" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="scope" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="28" fill="#fff" stroke="#bc1452" stroke-width="4"/>
+      <path d="M32 15 V36" stroke="#bc1452" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="32" cy="47" r="3.5" fill="#bc1452"/>
+    </symbol>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; }
+      .main-title { font-size: 48px; font-weight: 700; fill: #071b77; }
+      .main-subtitle { font-size: 30px; font-weight: 700; fill: #10216a; }
+      .tagline { font-size: 23px; fill: #314b79; }
+      .section-title { font-size: 28px; font-weight: 700; fill: #fff; }
+      .section-subtitle { font-size: 20px; fill: #fff; }
+      .zone-title { font-size: 24px; font-weight: 700; fill: #fff; }
+      .zone-subtitle { font-size: 18px; fill: #fff; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #304a6d; }
+      .micro { font-size: 17px; fill: #395371; }
+      .compact { font-size: 20px; font-weight: 700; }
+      .center { text-anchor: middle; }
+      .white { fill: #fff; }
+      .card { fill: #fff; stroke: #b6d2e6; stroke-width: 1.4; filter: url(#card-shadow); }
+      .data-flow { fill: none; stroke: #0866b5; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#data-arrow); }
+      .private-flow { fill: none; stroke: #00966d; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#private-arrow); }
+      .auth-flow { fill: none; stroke: #0a9aa1; stroke-width: 2.5; stroke-dasharray: 6 5; stroke-linejoin: round; marker-end: url(#auth-arrow); }
+      .step-heading { font-size: 21px; font-weight: 700; fill: #fff; }
+      .step-owner { font-size: 22px; font-weight: 700; }
+      .step-body { font-size: 20px; }
+    </style>
+  </defs>
+
+  <rect width="2400" height="1600" fill="#fff"/>
+  <path d="M0 0 H2400 V152 H0 Z" fill="#f6faff"/>
+  <text x="44" y="80" font-size="70" font-weight="700" fill="#003b7d">ZAVA</text>
+  <text x="48" y="122" class="micro" letter-spacing="2">CUSTOMER ANALYTICS</text>
+  <text x="1180" y="58" class="main-title center">Epic Cogito Cloud + ZAVA Fabric</text>
+  <text x="1180" y="108" class="main-subtitle center">Cross-Tenant Architecture &amp; Implementation Overview</text>
+  <text x="1180" y="144" class="tagline center">Secure identity. Private connectivity. Governed analytics. Clear ownership.</text>
+  <g id="brand-legend" aria-label="Epic and Microsoft technologies">
+    <text x="1944" y="66" font-size="54" font-weight="700" font-style="italic" fill="#c9094e">Epic</text>
+    <path d="M2080 28 V78" stroke="#a8b9d3" stroke-width="1.5"/>
+    <rect x="2104" y="30" width="21" height="21" fill="#f25022"/>
+    <rect x="2129" y="30" width="21" height="21" fill="#7fba00"/>
+    <rect x="2104" y="55" width="21" height="21" fill="#00a4ef"/>
+    <rect x="2129" y="55" width="21" height="21" fill="#ffb900"/>
+    <text x="2166" y="65" font-size="33" font-weight="600" fill="#51607b">Microsoft</text>
+    <text x="2350" y="111" class="micro" text-anchor="end" letter-spacing="1.5">VECTOR EDITION 01</text>
+  </g>
+
+  <g id="logical-architecture" aria-label="Logical architecture: Epic source to ZAVA analytics">
+    <rect x="24" y="168" width="1460" height="650" rx="12" fill="#f9fcff" stroke="#8ac5e4" stroke-width="1.5"/>
+    <path d="M36 168 H1472 Q1484 168 1484 180 V252 H24 V180 Q24 168 36 168 Z" fill="url(#blue-ribbon)"/>
+    <text x="44" y="207" class="section-title">1. Logical architecture - Epic source to ZAVA analytics</text>
+    <text x="44" y="237" class="section-subtitle">The original source-to-analytics flow, with Epic and ZAVA ownership kept separate</text>
+
+    <g id="epic-operational-ehr" aria-label="Epic operational EHR boundary">
+      <rect x="40" y="266" width="270" height="530" rx="10" fill="url(#blue-wash)" stroke="#65b7e7" stroke-width="1.5"/>
+      <path d="M50 266 H300 Q310 266 310 276 V336 H40 V276 Q40 266 50 266 Z" fill="url(#blue-ribbon)"/>
+      <text x="175" y="299" class="zone-title center">Epic operational EHR</text>
+      <text x="175" y="324" class="zone-subtitle center">Clinical source systems</text>
+      <g id="clinical-applications" data-node="true">
+        <rect x="56" y="350" width="238" height="150" rx="10" class="card"/>
+        <use href="#clinical" x="151" y="364" width="48" height="48"/>
+        <text x="175" y="438" class="heading center">Epic clinical apps</text>
+        <text x="175" y="465" class="small center">Hyperspace / MyChart</text>
+        <text x="175" y="489" class="small center">Orders / Results</text>
+      </g>
+      <path d="M175 500 V550" class="data-flow"/>
+      <g id="operational-database" data-node="true">
+        <rect x="56" y="550" width="238" height="132" rx="10" class="card"/>
+        <use href="#database" x="153" y="564" width="44" height="44"/>
+        <text x="175" y="635" class="heading center">Chronicles / IRIS</text>
+        <text x="175" y="663" class="small center">Operational EHR database</text>
+      </g>
+      <text x="175" y="737" class="small center">Epic-managed data</text>
+      <text x="175" y="763" class="small center">movement into Cogito</text>
+    </g>
+
+    <g id="epic-managed-azure" aria-label="Epic-managed Azure environment">
+      <rect x="330" y="266" width="470" height="530" rx="10" fill="#fff5f8" stroke="#ec6a9a" stroke-width="1.5"/>
+      <path d="M340 266 H790 Q800 266 800 276 V336 H330 V276 Q330 266 340 266 Z" fill="url(#epic-ribbon)"/>
+      <text x="565" y="299" class="zone-title center">Epic-managed Azure</text>
+      <text x="565" y="324" class="zone-subtitle center">Epic ingestion + Cogito Cloud</text>
+      <g id="epic-managed-ingestion" data-node="true">
+        <rect x="346" y="350" width="438" height="64" rx="9" class="card"/>
+        <use href="#pipeline" x="359" y="366" width="36" height="36"/>
+        <text x="410" y="378" class="heading">Epic-managed ingestion</text>
+        <text x="410" y="403" class="small">From operational EHR</text>
+      </g>
+      <g id="epic-cogito-cloud" aria-label="Epic Cogito Cloud boundary">
+        <rect x="338" y="434" width="454" height="350" rx="9" fill="#f1fcf7" stroke="#6db59a" stroke-width="1.4"/>
+        <text x="354" y="456" class="micro" style="fill:#00765b;font-weight:700">EPIC COGITO CLOUD</text>
+        <g id="epic-microsoft-fabric" data-node="true">
+          <rect x="346" y="468" width="438" height="62" rx="9" class="card"/>
+          <use href="#fabric" x="358" y="481" width="38" height="38"/>
+          <text x="410" y="495" class="heading">Microsoft Fabric</text>
+          <text x="410" y="520" class="small">Epic-managed platform</text>
+        </g>
+        <g id="cogito-cloud-data" data-node="true">
+          <rect x="346" y="566" width="438" height="66" rx="9" class="card"/>
+          <text x="565" y="596" class="heading center">Cogito Cloud data</text>
+          <text x="565" y="624" class="small center">Lakehouse / Warehouse | Epic data models</text>
+        </g>
+        <g id="epic-analytics" data-node="true">
+          <rect x="346" y="660" width="209" height="108" rx="9" class="card"/>
+          <text x="450.5" y="689" class="compact center">Epic analytics</text>
+          <text x="450.5" y="721" class="small center">SlicerDicer</text>
+          <text x="450.5" y="749" class="small center">Dashboards / AI</text>
+        </g>
+        <g id="fabric-sql-tds-endpoint" data-node="true">
+          <rect x="571" y="660" width="213" height="108" rx="9" fill="#fff3c7" stroke="#d2b348" stroke-width="1.5"/>
+          <text x="677.5" y="688" class="compact center">Fabric SQL / TDS</text>
+          <text x="677.5" y="714" class="compact center">endpoint</text>
+          <text x="677.5" y="749" class="small center">Supported access</text>
+        </g>
+      </g>
+      <path d="M565 414 V468" class="data-flow"/>
+      <path d="M565 530 V566" class="data-flow"/>
+      <path d="M450.5 632 V660" class="data-flow"/>
+      <path d="M677.5 632 V660" class="data-flow"/>
+    </g>
+
+    <g id="zava-fabric-tenant" aria-label="ZAVA customer Microsoft Fabric tenant">
+      <rect x="850" y="266" width="610" height="530" rx="10" fill="url(#purple-wash)" stroke="#ae80e0" stroke-width="1.5"/>
+      <path d="M860 266 H1450 Q1460 266 1460 276 V336 H850 V276 Q850 266 860 266 Z" fill="url(#purple-ribbon)"/>
+      <text x="1155" y="299" class="zone-title center">ZAVA Microsoft Fabric</text>
+      <text x="1155" y="324" class="zone-subtitle center">Customer-owned analytics tenant</text>
+      <g id="customer-sql-ingestion" data-node="true">
+        <rect x="866" y="350" width="578" height="64" rx="9" class="card"/>
+        <use href="#pipeline" x="879" y="365" width="36" height="36"/>
+        <text x="930" y="378" class="heading">Fabric Data Factory / Pipeline</text>
+        <text x="930" y="403" class="small">or supported SQL ingestion</text>
+      </g>
+      <g id="raw-epic-cogito-data" data-node="true">
+        <rect x="866" y="450" width="274" height="84" rx="9" fill="#e2f4e6" stroke="#8fbd95" stroke-width="1.5"/>
+        <text x="1003" y="479" class="compact center">OneLake / Lakehouse</text>
+        <text x="1003" y="504" class="small center">Raw Epic / Cogito data</text>
+        <text x="1003" y="526" class="micro center" style="font-size:15px">Ingest / copy</text>
+      </g>
+      <g id="other-enterprise-data" data-node="true">
+        <rect x="1170" y="450" width="274" height="84" rx="9" class="card"/>
+        <text x="1307" y="479" class="compact center">Other enterprise data</text>
+        <text x="1307" y="504" class="small center">ERP / Claims / CRM</text>
+        <text x="1307" y="526" class="micro center" style="font-size:15px">IoT / Finance</text>
+      </g>
+      <g id="curated-customer-data-model" data-node="true">
+        <rect x="866" y="568" width="578" height="66" rx="9" class="card"/>
+        <use href="#fabric" x="879" y="582" width="38" height="38"/>
+        <text x="930" y="596" class="heading">Curated Lakehouse / Warehouse</text>
+        <text x="930" y="622" class="small">ZAVA customer data model</text>
+      </g>
+      <g id="semantic-models" data-node="true">
+        <rect x="866" y="668" width="274" height="60" rx="9" class="card"/>
+        <text x="1003" y="693" class="compact center">Semantic models</text>
+        <text x="1003" y="720" class="micro center">Enterprise analytics layer</text>
+      </g>
+      <g id="data-science-ai" data-node="true">
+        <rect x="1170" y="668" width="274" height="116" rx="9" class="card"/>
+        <use href="#ai" x="1287" y="679" width="40" height="40"/>
+        <text x="1307" y="747" class="compact center">Data science / AI</text>
+        <text x="1307" y="773" class="small center">ZAVA use cases</text>
+      </g>
+      <g id="power-bi" data-node="true">
+        <rect x="866" y="750" width="274" height="34" rx="8" class="card"/>
+        <use href="#chart" x="875" y="755" width="24" height="24"/>
+        <text x="909" y="774" class="micro" style="font-size:16px">Power BI / dashboards / reports</text>
+      </g>
+      <path d="M1003 414 V450" class="data-flow"/>
+      <path d="M1003 534 V568" class="data-flow"/>
+      <path d="M1307 534 V568" class="data-flow"/>
+      <path d="M1003 634 V668" class="data-flow"/>
+      <path d="M1307 634 V668" class="data-flow"/>
+      <path d="M1003 728 V750" class="data-flow"/>
+    </g>
+
+    <g id="source-and-sql-connections" aria-label="Epic-managed movement and SQL TDS ingestion via the private access panel">
+      <path d="M294 616 H320 V382 H346" class="data-flow"/>
+      <path d="M784 714 H825 V382 H866" class="data-flow"/>
+      <circle cx="825" cy="548" r="17" fill="#fff" stroke="#008b78" stroke-width="2"/>
+      <text x="825" y="555" class="compact center" style="fill:#00735f">2</text>
+    </g>
+  </g>
+
+  <g id="private-access" aria-label="Private access: identity and connectivity">
+    <rect x="1504" y="168" width="872" height="650" rx="12" fill="#f9fdfc" stroke="#81c5bb" stroke-width="1.5"/>
+    <path d="M1516 168 H2364 Q2376 168 2376 180 V252 H1504 V180 Q1504 168 1516 168 Z" fill="url(#teal-ribbon)"/>
+    <text x="1524" y="207" class="section-title">2. Private access - identity and connectivity</text>
+    <text x="1524" y="237" class="section-subtitle">Microsoft Entra ID, hybrid networking, Private DNS and Private Link</text>
+
+    <g id="zava-azure-security-boundary" aria-label="ZAVA Azure security boundary">
+      <rect x="1520" y="278" width="540" height="512" rx="10" fill="url(#blue-wash)" stroke="#0d9ddb" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="1536" y="307" class="heading">ZAVA Azure / security boundary</text>
+      <g id="zava-entra-identities" data-node="true">
+        <rect x="1534" y="330" width="256" height="132" rx="9" class="card"/>
+        <use href="#entra" x="1642" y="338" width="40" height="40"/>
+        <text x="1662" y="404" class="heading center">Microsoft Entra ID</text>
+        <text x="1662" y="430" class="small center">MFA + Conditional Access</text>
+        <text x="1662" y="454" class="micro center">ZAVA identities</text>
+      </g>
+      <g id="hybrid-connectivity" data-node="true">
+        <rect x="1804" y="330" width="242" height="132" rx="9" class="card"/>
+        <use href="#network" x="1903" y="341" width="44" height="44"/>
+        <text x="1925" y="410" class="heading center">ExpressRoute / VPN</text>
+        <text x="1925" y="437" class="small center">or approved connectivity</text>
+      </g>
+      <g id="private-dns" data-node="true">
+        <rect x="1534" y="490" width="256" height="96" rx="9" class="card"/>
+        <use href="#dns" x="1546" y="510" width="42" height="42"/>
+        <text x="1602" y="528" class="heading">Private DNS</text>
+        <text x="1602" y="557" class="small">Name resolution</text>
+      </g>
+      <g id="zava-vnet" data-node="true">
+        <rect x="1804" y="490" width="242" height="96" rx="9" class="card"/>
+        <use href="#network" x="1816" y="510" width="42" height="42"/>
+        <text x="1872" y="528" class="heading">ZAVA VNet</text>
+        <text x="1872" y="557" class="small">Azure network</text>
+      </g>
+      <g id="private-endpoint" data-node="true">
+        <rect x="1534" y="664" width="512" height="102" rx="10" fill="#e4f6ed" stroke="#38a976" stroke-width="1.5"/>
+        <use href="#endpoint" x="1560" y="686" width="56" height="56"/>
+        <text x="1638" y="706" class="heading">Private Endpoint</text>
+        <text x="1638" y="738" class="body">Customer-managed Azure Private Link</text>
+      </g>
+      <path d="M1662 462 V476 H1925 V490" class="auth-flow"/>
+      <path d="M1925 462 V490" class="data-flow"/>
+      <path d="M1662 586 V626 H1744 V664" class="data-flow"/>
+      <path d="M1925 586 V626 H1836 V664" class="data-flow"/>
+      <text x="1540" y="624" class="micro">Private name</text>
+      <text x="1540" y="650" class="micro">resolution</text>
+    </g>
+
+    <g id="provider-private-access" aria-label="Epic provider endpoint through the illustrated private data path">
+      <rect x="2088" y="294" width="252" height="148" rx="10" fill="#fff3f7" stroke="#e56999" stroke-width="1.5"/>
+      <use href="#fabric" x="2191" y="307" width="46" height="46"/>
+      <text x="2214" y="382" class="heading center">Epic SQL / TDS</text>
+      <text x="2214" y="414" class="small center">Provider endpoint</text>
+      <use href="#private-cloud" x="2088" y="488" width="252" height="179"/>
+      <text x="2214" y="685" class="heading center" style="fill:#006482">Azure Private Link</text>
+      <text x="2214" y="754" class="small center">SQL / TDS path shown</text>
+      <text x="2214" y="780" class="small center">in logical panel 1</text>
+      <path d="M2214 442 V518" class="private-flow"/>
+      <path d="M2100 582 H2074 V715 H2046" class="private-flow"/>
+    </g>
+  </g>
+
+  <g id="implementation-overview" aria-label="Five implementation stages reflected in the original architecture">
+    <rect x="24" y="838" width="1970" height="482" rx="12" fill="#f8fbff" stroke="#9ebde4" stroke-width="1.5"/>
+    <path d="M36 838 H1982 Q1994 838 1994 850 V914 H24 V850 Q24 838 36 838 Z" fill="url(#purple-ribbon)"/>
+    <text x="44" y="873" class="section-title">3. Practical implementation overview</text>
+    <text x="44" y="903" class="section-subtitle">Five stages reflected in the source diagram; provider and client support require validation</text>
+
+    <g id="stage-1" data-step="true">
+      <rect x="40" y="928" width="378" height="374" rx="10" fill="#edf6ff" stroke="#a9cde8" stroke-width="1.3"/>
+      <path d="M50 928 H408 Q418 928 418 938 V1000 H40 V938 Q40 928 50 928 Z" fill="url(#blue-ribbon)"/>
+      <circle cx="68" cy="963" r="19" fill="#fff"/>
+      <text x="68" y="971" class="heading center" style="fill:#0759ce">1</text>
+      <text x="99" y="956" class="step-heading">Prepare source</text>
+      <text x="99" y="984" class="step-heading">and platform</text>
+      <text x="58" y="1036" class="step-owner" style="fill:#064e9e">Epic-managed Azure</text>
+      <text x="58" y="1073" class="step-body">&#8226; Clinical apps: Hyperspace,</text>
+      <text x="76" y="1100" class="step-body">MyChart, orders, results.</text>
+      <text x="58" y="1137" class="step-body">&#8226; Chronicles / IRIS is the</text>
+      <text x="76" y="1164" class="step-body">operational EHR database.</text>
+      <text x="58" y="1201" class="step-body">&#8226; Epic-managed ingestion feeds</text>
+      <text x="76" y="1228" class="step-body">Cogito Cloud on Fabric.</text>
+      <rect x="54" y="1260" width="350" height="28" rx="6" fill="#d8ebfd"/>
+      <text x="229" y="1281" class="micro center">Managed source, separate ownership</text>
+    </g>
+
+    <g id="stage-2" data-step="true">
+      <rect x="430" y="928" width="378" height="374" rx="10" fill="#eaf7f2" stroke="#99cbbb" stroke-width="1.3"/>
+      <path d="M440 928 H798 Q808 928 808 938 V1000 H430 V938 Q430 928 440 928 Z" fill="url(#teal-ribbon)"/>
+      <circle cx="458" cy="963" r="19" fill="#fff"/>
+      <text x="458" y="971" class="heading center" style="fill:#00765f">2</text>
+      <text x="489" y="956" class="step-heading">Expose supported</text>
+      <text x="489" y="984" class="step-heading">SQL access</text>
+      <text x="448" y="1036" class="step-owner" style="fill:#00634f">Epic Cogito Cloud</text>
+      <text x="448" y="1073" class="step-body">&#8226; Fabric Lakehouse / Warehouse</text>
+      <text x="466" y="1100" class="step-body">holds Epic data models.</text>
+      <text x="448" y="1137" class="step-body">&#8226; Fabric SQL / TDS is the supported</text>
+      <text x="466" y="1164" class="step-body">customer access interface.</text>
+      <text x="448" y="1201" class="step-body">&#8226; Epic analytics stay local:</text>
+      <text x="466" y="1228" class="step-body">SlicerDicer, dashboards and AI.</text>
+      <rect x="444" y="1260" width="350" height="28" rx="6" fill="#d3eee3"/>
+      <text x="619" y="1281" class="micro center">Confirm provider support</text>
+    </g>
+
+    <g id="stage-3" data-step="true">
+      <rect x="820" y="928" width="378" height="374" rx="10" fill="#f3edfc" stroke="#c5b3e4" stroke-width="1.3"/>
+      <path d="M830 928 H1188 Q1198 928 1198 938 V1000 H820 V938 Q820 928 830 928 Z" fill="url(#purple-ribbon)"/>
+      <circle cx="848" cy="963" r="19" fill="#fff"/>
+      <text x="848" y="971" class="heading center" style="fill:#6331b7">3</text>
+      <text x="879" y="956" class="step-heading">Establish private</text>
+      <text x="879" y="984" class="step-heading">access</text>
+      <text x="838" y="1036" class="step-owner" style="fill:#563099">ZAVA Azure</text>
+      <text x="838" y="1073" class="step-body">&#8226; Entra identities: MFA and</text>
+      <text x="856" y="1100" class="step-body">Conditional Access.</text>
+      <text x="838" y="1137" class="step-body">&#8226; ExpressRoute / VPN or</text>
+      <text x="856" y="1164" class="step-body">approved connectivity.</text>
+      <text x="838" y="1201" class="step-body">&#8226; VNet, Private DNS and a</text>
+      <text x="856" y="1228" class="step-body">Private Endpoint / Private Link.</text>
+      <rect x="834" y="1260" width="350" height="28" rx="6" fill="#e5dcf5"/>
+      <text x="1009" y="1281" class="micro center">Identity and network controls</text>
+    </g>
+
+    <g id="stage-4" data-step="true">
+      <rect x="1210" y="928" width="378" height="374" rx="10" fill="#fff9e9" stroke="#dbc77c" stroke-width="1.3"/>
+      <path d="M1220 928 H1578 Q1588 928 1588 938 V1000 H1210 V938 Q1210 928 1220 928 Z" fill="url(#gold-ribbon)"/>
+      <circle cx="1238" cy="963" r="19" fill="#fff"/>
+      <text x="1238" y="971" class="heading center" style="fill:#927600">4</text>
+      <text x="1269" y="956" class="step-heading">Ingest and</text>
+      <text x="1269" y="984" class="step-heading">curate data</text>
+      <text x="1228" y="1036" class="step-owner" style="fill:#7e6700">ZAVA Fabric</text>
+      <text x="1228" y="1073" class="step-body">&#8226; Fabric Data Factory / Pipeline</text>
+      <text x="1246" y="1100" class="step-body">or supported SQL ingestion.</text>
+      <text x="1228" y="1137" class="step-body">&#8226; Land raw Epic / Cogito data</text>
+      <text x="1246" y="1164" class="step-body">in OneLake / Lakehouse.</text>
+      <text x="1228" y="1201" class="step-body">&#8226; Combine ERP, claims, CRM,</text>
+      <text x="1246" y="1228" class="step-body">IoT and finance in a curated model.</text>
+      <rect x="1224" y="1260" width="350" height="28" rx="6" fill="#f4e9bf"/>
+      <text x="1399" y="1281" class="micro center">Customer-owned ingestion</text>
+    </g>
+
+    <g id="stage-5" data-step="true">
+      <rect x="1600" y="928" width="378" height="374" rx="10" fill="#ecf9fc" stroke="#9bd4de" stroke-width="1.3"/>
+      <path d="M1610 928 H1968 Q1978 928 1978 938 V1000 H1600 V938 Q1600 928 1610 928 Z" fill="url(#cyan-ribbon)"/>
+      <circle cx="1628" cy="963" r="19" fill="#fff"/>
+      <text x="1628" y="971" class="heading center" style="fill:#0087a2">5</text>
+      <text x="1659" y="956" class="step-heading">Deliver</text>
+      <text x="1659" y="984" class="step-heading">analytics</text>
+      <text x="1618" y="1036" class="step-owner" style="fill:#007d94">ZAVA Fabric</text>
+      <text x="1618" y="1073" class="step-body">&#8226; Curated Lakehouse / Warehouse</text>
+      <text x="1636" y="1100" class="step-body">holds the customer data model.</text>
+      <text x="1618" y="1137" class="step-body">&#8226; Semantic models support</text>
+      <text x="1636" y="1164" class="step-body">Power BI dashboards / reports.</text>
+      <text x="1618" y="1201" class="step-body">&#8226; Data science and AI support</text>
+      <text x="1636" y="1228" class="step-body">ZAVA customer use cases.</text>
+      <rect x="1614" y="1260" width="350" height="28" rx="6" fill="#d4eef4"/>
+      <text x="1789" y="1281" class="micro center">Governed analytical outputs</text>
+    </g>
+  </g>
+
+  <g id="key-considerations" aria-label="Key considerations">
+    <rect x="2014" y="838" width="362" height="482" rx="12" fill="#edf3fa" stroke="#c3d4e9" stroke-width="1.4"/>
+    <text x="2038" y="878" font-size="26" font-weight="700">Key considerations</text>
+    <use href="#shield" x="2036" y="903" width="44" height="44"/>
+    <text x="2096" y="925" class="body">Separate Epic and</text>
+    <text x="2096" y="952" class="body">ZAVA ownership</text>
+    <use href="#lock" x="2036" y="980" width="44" height="44"/>
+    <text x="2096" y="1002" class="body">Private SQL / TDS</text>
+    <text x="2096" y="1029" class="body">access path</text>
+    <use href="#entra" x="2036" y="1057" width="44" height="44"/>
+    <text x="2096" y="1079" class="body">MFA + Conditional</text>
+    <text x="2096" y="1106" class="body">Access for identities</text>
+    <use href="#database" x="2036" y="1134" width="44" height="44"/>
+    <text x="2096" y="1156" class="body">Raw and curated</text>
+    <text x="2096" y="1183" class="body">data separation</text>
+    <use href="#check" x="2036" y="1211" width="44" height="44"/>
+    <text x="2096" y="1233" class="body">Confirm provider and</text>
+    <text x="2096" y="1260" class="body">ingestion support</text>
+  </g>
+
+  <g id="outcome" aria-label="Expected analytical outcome">
+    <rect x="24" y="1340" width="1184" height="154" rx="13" fill="url(#green-wash)" stroke="#94cdb0" stroke-width="1.4"/>
+    <use href="#check" x="44" y="1358" width="48" height="48"/>
+    <text x="108" y="1376" font-size="27" font-weight="700" fill="#095a43">Outcome</text>
+    <text x="108" y="1418" class="body">Epic-managed source data feeds a customer-owned ZAVA Fabric analytics model.</text>
+    <text x="108" y="1453" class="body">Raw and curated layers support Power BI, enterprise data models, and AI.</text>
+  </g>
+  <g id="scope-and-ownership" aria-label="Scope, ownership, and validation limits">
+    <rect x="1228" y="1340" width="1148" height="154" rx="13" fill="#fff1f6" stroke="#e8a8c0" stroke-width="1.4"/>
+    <use href="#scope" x="1248" y="1358" width="48" height="48"/>
+    <text x="1312" y="1376" font-size="27" font-weight="700" fill="#a31a50">Scope and ownership</text>
+    <text x="1312" y="1418" class="body">An ingested copy is held in ZAVA Fabric; Epic analytics remain in Epic.</text>
+    <text x="1312" y="1453" class="body">Conceptual design: validate tenant roles, ingestion support, and connectivity.</text>
+  </g>
+  <g id="footer" aria-label="Legend and artifact scope">
+    <rect x="0" y="1512" width="2400" height="64" fill="url(#blue-ribbon)"/>
+    <text x="1030" y="1553" font-size="27" font-weight="600" font-style="italic" class="white center">Secure identity. Private connectivity. Governed analytics. Clear ownership.</text>
+    <text x="2350" y="1553" font-size="22" class="white" text-anchor="end">ZAVA | Epic | Microsoft</text>
+    <text x="32" y="1594" font-size="15" fill="#526683">Solid arrows: data / connectivity. Dashed arrow: identity authentication. Panel 2 expands the private access path in panel 1.</text>
+    <text x="2368" y="1594" font-size="15" fill="#526683" text-anchor="end">Editable vector redraw | Original PNG and prior SVG retained | v1</text>
+  </g>
+</svg>
