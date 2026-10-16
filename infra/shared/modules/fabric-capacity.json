@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "5774575534504233148"
+    }
+  },
+  "parameters": {
+    "namePrefix": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "administrators": {
+      "type": "array",
+      "minLength": 1
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Fabric/capacities",
+      "apiVersion": "2023-11-01",
+      "name": "[format('{0}{1}', parameters('namePrefix'), uniqueString(resourceGroup().id))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "[parameters('sku')]",
+        "tier": "Fabric"
+      },
+      "properties": {
+        "administration": {
+          "members": "[parameters('administrators')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "capacityId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Fabric/capacities', format('{0}{1}', parameters('namePrefix'), uniqueString(resourceGroup().id)))]"
+    },
+    "capacityName": {
+      "type": "string",
+      "value": "[format('{0}{1}', parameters('namePrefix'), uniqueString(resourceGroup().id))]"
+    }
+  }
+}

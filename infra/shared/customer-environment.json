@@ -1,0 +1,1368 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "languageVersion": "2.0",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "15464831423190494816"
+    }
+  },
+  "definitions": {
+    "environmentSettings": {
+      "type": "object",
+      "properties": {
+        "namePrefix": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 12
+        },
+        "location": {
+          "type": "string"
+        },
+        "vnetAddressPrefix": {
+          "type": "string",
+          "metadata": {
+            "description": "Nonoverlapping IPv4 /16. Subnets are derived from this prefix."
+          }
+        },
+        "adminUsername": {
+          "type": "string"
+        },
+        "vmSize": {
+          "type": "string"
+        },
+        "httpsAllowedFqdns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minLength": 1,
+          "metadata": {
+            "description": "Approved HTTPS destinations for Entra, Fabric, gateway relay, and software management. No wildcard-wide Internet rule."
+          }
+        },
+        "sqlServiceTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minLength": 1,
+          "metadata": {
+            "description": "Public SQL only: approved service tags covering provider home, capacity, and recovery regions."
+          }
+        },
+        "tags": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "fabricSettings": {
+      "type": "object",
+      "properties": {
+        "sku": {
+          "type": "string",
+          "allowedValues": [
+            "F1024",
+            "F128",
+            "F16",
+            "F2",
+            "F2048",
+            "F256",
+            "F32",
+            "F4",
+            "F512",
+            "F64",
+            "F8"
+          ]
+        },
+        "administrators": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minLength": 1
+        },
+        "landingDataPrincipalId": {
+          "type": "string",
+          "metadata": {
+            "description": "Optional customer-tenant object ID explicitly authorized to write landing data. Empty means no data-plane grant."
+          }
+        }
+      },
+      "additionalProperties": false,
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "environment": {
+      "$ref": "#/definitions/environmentSettings"
+    },
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "publicSql": {
+      "type": "bool"
+    },
+    "customerFabric": {
+      "type": "bool"
+    },
+    "providerPrivateLinkServiceId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "fabric": {
+      "$ref": "#/definitions/fabricSettings",
+      "nullable": true
+    }
+  },
+  "variables": {
+    "tags": "[union(parameters('environment').tags, createObject('architecture', if(parameters('customerFabric'), 'customer-fabric', 'azure-client'), 'sqlTransport', if(parameters('publicSql'), 'public-tds', 'workspace-private-link')))]"
+  },
+  "resources": {
+    "monitoring": {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-monitoring', parameters('environment').namePrefix)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "namePrefix": {
+            "value": "[parameters('environment').namePrefix]"
+          },
+          "location": {
+            "value": "[parameters('environment').location]"
+          },
+          "tags": {
+            "value": "[variables('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.38.33.27573",
+              "templateHash": "4569021450345617405"
+            }
+          },
+          "parameters": {
+            "namePrefix": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "apiVersion": "2023-09-01",
+              "name": "[format('{0}-logs', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "sku": {
+                  "name": "PerGB2018"
+                },
+                "retentionInDays": 90,
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled",
+                "features": {
+                  "enableLogAccessUsingOnlyResourcePermissions": true
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "workspaceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-logs', parameters('namePrefix')))]"
+            }
+          }
+        }
+      }
+    },
+    "network": {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-network', parameters('environment').namePrefix)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "namePrefix": {
+            "value": "[parameters('environment').namePrefix]"
+          },
+          "location": {
+            "value": "[parameters('environment').location]"
+          },
+          "addressPrefix": {
+            "value": "[parameters('environment').vnetAddressPrefix]"
+          },
+          "publicSql": {
+            "value": "[parameters('publicSql')]"
+          },
+          "httpsAllowedFqdns": {
+            "value": "[parameters('environment').httpsAllowedFqdns]"
+          },
+          "sqlServiceTags": {
+            "value": "[parameters('environment').sqlServiceTags]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[reference('monitoring').outputs.workspaceId.value]"
+          },
+          "tags": {
+            "value": "[variables('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.38.33.27573",
+              "templateHash": "10314523391909541524"
+            }
+          },
+          "parameters": {
+            "namePrefix": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "addressPrefix": {
+              "type": "string"
+            },
+            "publicSql": {
+              "type": "bool"
+            },
+            "httpsAllowedFqdns": {
+              "type": "array"
+            },
+            "sqlServiceTags": {
+              "type": "array"
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "copy": [
+              {
+                "name": "publicSqlRules",
+                "count": "[length(if(parameters('publicSql'), parameters('sqlServiceTags'), createArray()))]",
+                "input": {
+                  "name": "[format('AllowApprovedPublicSql-{0}', copyIndex('publicSqlRules'))]",
+                  "properties": {
+                    "priority": "[add(300, copyIndex('publicSqlRules'))]",
+                    "direction": "Outbound",
+                    "access": "Allow",
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "destinationPortRange": "1433",
+                    "sourceAddressPrefix": "[variables('workloadPrefix')]",
+                    "destinationAddressPrefix": "[if(parameters('publicSql'), parameters('sqlServiceTags'), createArray())[copyIndex('publicSqlRules')]]"
+                  }
+                }
+              }
+            ],
+            "workloadPrefix": "[cidrSubnet(parameters('addressPrefix'), 24, 0)]",
+            "endpointPrefix": "[cidrSubnet(parameters('addressPrefix'), 24, 1)]",
+            "firewallPrefix": "[cidrSubnet(parameters('addressPrefix'), 24, 2)]",
+            "bastionPrefix": "[cidrSubnet(parameters('addressPrefix'), 24, 3)]",
+            "sqlFirewallRules": "[if(parameters('publicSql'), createArray(createObject('name', 'ApprovedFabricTds', 'ruleType', 'NetworkRule', 'ipProtocols', createArray('TCP'), 'sourceAddresses', createArray(variables('workloadPrefix')), 'destinationAddresses', parameters('sqlServiceTags'), 'destinationPorts', createArray('1433'))), createArray())]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-client-nsg', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "securityRules": "[concat(createArray(createObject('name', 'AllowBastionRdp', 'properties', createObject('priority', 100, 'direction', 'Inbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRange', '3389', 'sourceAddressPrefix', variables('bastionPrefix'), 'destinationAddressPrefix', variables('workloadPrefix'))), createObject('name', 'DenyOtherInbound', 'properties', createObject('priority', 4096, 'direction', 'Inbound', 'access', 'Deny', 'protocol', '*', 'sourcePortRange', '*', 'destinationPortRange', '*', 'sourceAddressPrefix', '*', 'destinationAddressPrefix', '*')), createObject('name', 'AllowAzureDns', 'properties', createObject('priority', 100, 'direction', 'Outbound', 'access', 'Allow', 'protocol', '*', 'sourcePortRange', '*', 'destinationPortRange', '53', 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', 'AzurePlatformDNS')), createObject('name', 'AllowFirewallDnsProxy', 'properties', createObject('priority', 105, 'direction', 'Outbound', 'access', 'Allow', 'protocol', '*', 'sourcePortRange', '*', 'destinationPortRange', '53', 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', variables('firewallPrefix'))), createObject('name', 'AllowAzureVmAgent', 'properties', createObject('priority', 110, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRanges', createArray('80', '32526'), 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', '168.63.129.16')), createObject('name', 'AllowAzureInstanceMetadata', 'properties', createObject('priority', 120, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRange', '80', 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', 'AzurePlatformIMDS')), createObject('name', 'AllowPrivateServices', 'properties', createObject('priority', 200, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRanges', createArray('443', '1433'), 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', variables('endpointPrefix'))), createObject('name', 'AllowFirewallFilteredWeb', 'properties', createObject('priority', 210, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRanges', createArray('80', '443'), 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', 'Internet')), createObject('name', 'AllowWindowsActivation', 'properties', createObject('priority', 230, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRange', '1688', 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', 'AzurePlatformLKM')), createObject('name', 'DenyOtherOutbound', 'properties', createObject('priority', 4096, 'direction', 'Outbound', 'access', 'Deny', 'protocol', '*', 'sourcePortRange', '*', 'destinationPortRange', '*', 'sourceAddressPrefix', '*', 'destinationAddressPrefix', '*'))), variables('publicSqlRules'))]"
+              }
+            },
+            {
+              "type": "Microsoft.Network/firewallPolicies",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-egress-policy', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "sku": {
+                  "tier": "Standard"
+                },
+                "threatIntelMode": "Deny",
+                "dnsSettings": {
+                  "enableProxy": true
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}/{1}', format('{0}-egress-policy', parameters('namePrefix')), 'client-egress')]",
+              "properties": {
+                "priority": 100,
+                "ruleCollections": [
+                  {
+                    "name": "platform-and-sql",
+                    "priority": 100,
+                    "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+                    "action": {
+                      "type": "Allow"
+                    },
+                    "rules": "[concat(createArray(createObject('name', 'WindowsActivation', 'ruleType', 'NetworkRule', 'ipProtocols', createArray('TCP'), 'sourceAddresses', createArray(variables('workloadPrefix')), 'destinationFqdns', createArray(format('azkms.{0}', environment().suffixes.storage)), 'destinationPorts', createArray('1688'))), variables('sqlFirewallRules'))]"
+                  },
+                  {
+                    "name": "approved-https",
+                    "priority": 200,
+                    "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+                    "action": {
+                      "type": "Allow"
+                    },
+                    "rules": [
+                      {
+                        "name": "MicrosoftManagedWindowsUpdate",
+                        "ruleType": "ApplicationRule",
+                        "sourceAddresses": [
+                          "[variables('workloadPrefix')]"
+                        ],
+                        "protocols": [
+                          {
+                            "protocolType": "Https",
+                            "port": 443
+                          }
+                        ],
+                        "fqdnTags": [
+                          "WindowsUpdate"
+                        ]
+                      },
+                      {
+                        "name": "EntraFabricAndApprovedManagement",
+                        "ruleType": "ApplicationRule",
+                        "sourceAddresses": [
+                          "[variables('workloadPrefix')]"
+                        ],
+                        "protocols": [
+                          {
+                            "protocolType": "Https",
+                            "port": 443
+                          }
+                        ],
+                        "targetFqdns": "[parameters('httpsAllowedFqdns')]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/firewallPolicies', format('{0}-egress-policy', parameters('namePrefix')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-egress-ip', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static"
+              }
+            },
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-bastion-ip', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static"
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-vnet', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('addressPrefix')]"
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}/{1}', format('{0}-vnet', parameters('namePrefix')), 'AzureFirewallSubnet')]",
+              "properties": {
+                "addressPrefix": "[variables('firewallPrefix')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}/{1}', format('{0}-vnet', parameters('namePrefix')), 'AzureBastionSubnet')]",
+              "properties": {
+                "addressPrefix": "[variables('bastionPrefix')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureFirewallSubnet')]",
+                "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/azureFirewalls",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-egress', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "sku": {
+                  "name": "AZFW_VNet",
+                  "tier": "Standard"
+                },
+                "firewallPolicy": {
+                  "id": "[resourceId('Microsoft.Network/firewallPolicies', format('{0}-egress-policy', parameters('namePrefix')))]"
+                },
+                "ipConfigurations": [
+                  {
+                    "name": "primary",
+                    "properties": {
+                      "subnet": {
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureFirewallSubnet')]"
+                      },
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-egress-ip', parameters('namePrefix')))]"
+                      }
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-egress-ip', parameters('namePrefix')))]",
+                "[resourceId('Microsoft.Network/firewallPolicies', format('{0}-egress-policy', parameters('namePrefix')))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureFirewallSubnet')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/routeTables",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-client-routes', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "disableBgpRoutePropagation": true,
+                "routes": [
+                  {
+                    "name": "DefaultViaFirewall",
+                    "properties": {
+                      "addressPrefix": "0.0.0.0/0",
+                      "nextHopType": "VirtualAppliance",
+                      "nextHopIpAddress": "[reference(resourceId('Microsoft.Network/azureFirewalls', format('{0}-egress', parameters('namePrefix'))), '2024-05-01').ipConfigurations[0].properties.privateIPAddress]"
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/azureFirewalls', format('{0}-egress', parameters('namePrefix')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}/{1}', format('{0}-vnet', parameters('namePrefix')), 'clients')]",
+              "properties": {
+                "addressPrefix": "[variables('workloadPrefix')]",
+                "defaultOutboundAccess": false,
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', format('{0}-client-nsg', parameters('namePrefix')))]"
+                },
+                "routeTable": {
+                  "id": "[resourceId('Microsoft.Network/routeTables', format('{0}-client-routes', parameters('namePrefix')))]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureBastionSubnet')]",
+                "[resourceId('Microsoft.Network/routeTables', format('{0}-client-routes', parameters('namePrefix')))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('{0}-client-nsg', parameters('namePrefix')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}/{1}', format('{0}-vnet', parameters('namePrefix')), 'private-endpoints')]",
+              "properties": {
+                "addressPrefix": "[variables('endpointPrefix')]",
+                "defaultOutboundAccess": false,
+                "privateEndpointNetworkPolicies": "Disabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'clients')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/bastionHosts",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-bastion', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "enableTunneling": false,
+                "enableIpConnect": false,
+                "enableShareableLink": false,
+                "ipConfigurations": [
+                  {
+                    "name": "primary",
+                    "properties": {
+                      "subnet": {
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureBastionSubnet')]"
+                      },
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-bastion-ip', parameters('namePrefix')))]"
+                      }
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-bastion-ip', parameters('namePrefix')))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureBastionSubnet')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/azureFirewalls/{0}', format('{0}-egress', parameters('namePrefix')))]",
+              "name": "central-logs",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/azureFirewalls', format('{0}-egress', parameters('namePrefix')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/bastionHosts/{0}', format('{0}-bastion', parameters('namePrefix')))]",
+              "name": "central-logs",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/bastionHosts', format('{0}-bastion', parameters('namePrefix')))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "vnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]"
+            },
+            "workloadSubnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'clients')]"
+            },
+            "endpointSubnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'private-endpoints')]"
+            },
+            "egressPublicIp": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', format('{0}-egress-ip', parameters('namePrefix'))), '2024-05-01').ipAddress]"
+            },
+            "bastionId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/bastionHosts', format('{0}-bastion', parameters('namePrefix')))]"
+            },
+            "dnsProxyIp": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/azureFirewalls', format('{0}-egress', parameters('namePrefix'))), '2024-05-01').ipConfigurations[0].properties.privateIPAddress]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "monitoring"
+      ]
+    },
+    "client": {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-client', parameters('environment').namePrefix)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "namePrefix": {
+            "value": "[parameters('environment').namePrefix]"
+          },
+          "location": {
+            "value": "[parameters('environment').location]"
+          },
+          "subnetId": {
+            "value": "[reference('network').outputs.workloadSubnetId.value]"
+          },
+          "dnsServerIp": {
+            "value": "[reference('network').outputs.dnsProxyIp.value]"
+          },
+          "adminUsername": {
+            "value": "[parameters('environment').adminUsername]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "vmSize": {
+            "value": "[parameters('environment').vmSize]"
+          },
+          "tags": {
+            "value": "[variables('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.38.33.27573",
+              "templateHash": "10759800226683692367"
+            }
+          },
+          "parameters": {
+            "namePrefix": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "subnetId": {
+              "type": "string"
+            },
+            "dnsServerIp": {
+              "type": "string"
+            },
+            "adminUsername": {
+              "type": "string"
+            },
+            "adminPassword": {
+              "type": "securestring",
+              "minLength": 12
+            },
+            "vmSize": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-client-nic', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "dnsSettings": {
+                  "dnsServers": [
+                    "[parameters('dnsServerIp')]"
+                  ]
+                },
+                "ipConfigurations": [
+                  {
+                    "name": "primary",
+                    "properties": {
+                      "privateIPAllocationMethod": "Dynamic",
+                      "subnet": {
+                        "id": "[parameters('subnetId')]"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2024-07-01",
+              "name": "[format('{0}-client', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "[parameters('vmSize')]"
+                },
+                "securityProfile": {
+                  "securityType": "TrustedLaunch",
+                  "uefiSettings": {
+                    "secureBootEnabled": true,
+                    "vTpmEnabled": true
+                  }
+                },
+                "osProfile": {
+                  "computerName": "[format('{0}vm', parameters('namePrefix'))]",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPassword')]",
+                  "windowsConfiguration": {
+                    "provisionVMAgent": true,
+                    "enableAutomaticUpdates": true,
+                    "patchSettings": {
+                      "patchMode": "AutomaticByPlatform",
+                      "assessmentMode": "AutomaticByPlatform"
+                    }
+                  }
+                },
+                "storageProfile": {
+                  "imageReference": {
+                    "publisher": "MicrosoftWindowsServer",
+                    "offer": "WindowsServer",
+                    "sku": "2022-datacenter-azure-edition",
+                    "version": "latest"
+                  },
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "managedDisk": {
+                      "storageAccountType": "Premium_LRS"
+                    }
+                  }
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-client-nic', parameters('namePrefix')))]"
+                    }
+                  ]
+                },
+                "diagnosticsProfile": {
+                  "bootDiagnostics": {
+                    "enabled": true
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-client-nic', parameters('namePrefix')))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "vmId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Compute/virtualMachines', format('{0}-client', parameters('namePrefix')))]"
+            },
+            "privateIp": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', format('{0}-client-nic', parameters('namePrefix'))), '2024-05-01').ipConfigurations[0].properties.privateIPAddress]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "network"
+      ]
+    },
+    "epicEndpoint": {
+      "condition": "[not(parameters('publicSql'))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-epic-endpoint', parameters('environment').namePrefix)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "namePrefix": {
+            "value": "[parameters('environment').namePrefix]"
+          },
+          "location": {
+            "value": "[parameters('environment').location]"
+          },
+          "subnetId": {
+            "value": "[reference('network').outputs.endpointSubnetId.value]"
+          },
+          "vnetId": {
+            "value": "[reference('network').outputs.vnetId.value]"
+          },
+          "providerPrivateLinkServiceId": {
+            "value": "[parameters('providerPrivateLinkServiceId')]"
+          },
+          "tags": {
+            "value": "[variables('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.38.33.27573",
+              "templateHash": "3797100939961451412"
+            }
+          },
+          "parameters": {
+            "namePrefix": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "subnetId": {
+              "type": "string"
+            },
+            "vnetId": {
+              "type": "string"
+            },
+            "providerPrivateLinkServiceId": {
+              "type": "string",
+              "minLength": 1,
+              "metadata": {
+                "description": "Epic-owned Microsoft.Fabric/privateLinkServicesForFabric resource ID, not a workspace GUID or Microsoft.Network/privateLinkServices ID."
+              }
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-epic-workspace-pe', parameters('namePrefix'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "subnet": {
+                  "id": "[parameters('subnetId')]"
+                },
+                "manualPrivateLinkServiceConnections": [
+                  {
+                    "name": "epic-approval-required",
+                    "properties": {
+                      "privateLinkServiceId": "[parameters('providerPrivateLinkServiceId')]",
+                      "groupIds": [
+                        "workspace"
+                      ],
+                      "requestMessage": "Customer requests access to the agreed Cogito workspace. Provider approval and separate data authorization required."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Network/privateDnsZones",
+              "apiVersion": "2024-06-01",
+              "name": "privatelink.fabric.microsoft.com",
+              "location": "global",
+              "tags": "[parameters('tags')]"
+            },
+            {
+              "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+              "apiVersion": "2024-06-01",
+              "name": "[format('{0}/{1}', 'privatelink.fabric.microsoft.com', format('{0}-fabric-dns', parameters('namePrefix')))]",
+              "location": "global",
+              "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                  "id": "[parameters('vnetId')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.fabric.microsoft.com')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}/{1}', format('{0}-epic-workspace-pe', parameters('namePrefix')), 'fabric')]",
+              "properties": {
+                "privateDnsZoneConfigs": [
+                  {
+                    "name": "fabric",
+                    "properties": {
+                      "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.fabric.microsoft.com')]"
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateEndpoints', format('{0}-epic-workspace-pe', parameters('namePrefix')))]",
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.fabric.microsoft.com')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "endpointId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/privateEndpoints', format('{0}-epic-workspace-pe', parameters('namePrefix')))]"
+            },
+            "dnsZoneId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.fabric.microsoft.com')]"
+            },
+            "dnsHandoff": {
+              "type": "string",
+              "value": "After Epic approves, inspect the endpoint DNS configuration. Deploy shared/consumer-sql-dns only with the actual guest-specific SQL hostname and the verified SQL member IP."
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "network"
+      ]
+    },
+    "capacity": {
+      "condition": "[parameters('customerFabric')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-capacity', parameters('environment').namePrefix)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "namePrefix": {
+            "value": "[parameters('environment').namePrefix]"
+          },
+          "location": {
+            "value": "[parameters('environment').location]"
+          },
+          "sku": {
+            "value": "[parameters('fabric').sku]"
+          },
+          "administrators": {
+            "value": "[parameters('fabric').administrators]"
+          },
+          "tags": {
+            "value": "[variables('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.38.33.27573",
+              "templateHash": "5774575534504233148"
+            }
+          },
+          "parameters": {
+            "namePrefix": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sku": {
+              "type": "string"
+            },
+            "administrators": {
+              "type": "array",
+              "minLength": 1
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Fabric/capacities",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}{1}', parameters('namePrefix'), uniqueString(resourceGroup().id))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "[parameters('sku')]",
+                "tier": "Fabric"
+              },
+              "properties": {
+                "administration": {
+                  "members": "[parameters('administrators')]"
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "capacityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Fabric/capacities', format('{0}{1}', parameters('namePrefix'), uniqueString(resourceGroup().id)))]"
+            },
+            "capacityName": {
+              "type": "string",
+              "value": "[format('{0}{1}', parameters('namePrefix'), uniqueString(resourceGroup().id))]"
+            }
+          }
+        }
+      }
+    },
+    "storage": {
+      "condition": "[parameters('customerFabric')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}-landing', parameters('environment').namePrefix)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "namePrefix": {
+            "value": "[parameters('environment').namePrefix]"
+          },
+          "location": {
+            "value": "[parameters('environment').location]"
+          },
+          "subnetId": {
+            "value": "[reference('network').outputs.endpointSubnetId.value]"
+          },
+          "vnetId": {
+            "value": "[reference('network').outputs.vnetId.value]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[reference('monitoring').outputs.workspaceId.value]"
+          },
+          "dataPrincipalId": {
+            "value": "[parameters('fabric').landingDataPrincipalId]"
+          },
+          "tags": {
+            "value": "[variables('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.38.33.27573",
+              "templateHash": "3068003075437233941"
+            }
+          },
+          "parameters": {
+            "namePrefix": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "subnetId": {
+              "type": "string"
+            },
+            "vnetId": {
+              "type": "string"
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string"
+            },
+            "dataPrincipalId": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "services": [
+              {
+                "group": "blob",
+                "zone": "[format('privatelink.blob.{0}', environment().suffixes.storage)]"
+              },
+              {
+                "group": "dfs",
+                "zone": "[format('privatelink.dfs.{0}', environment().suffixes.storage)]"
+              }
+            ]
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2023-05-01",
+              "name": "[format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "Standard_ZRS"
+              },
+              "kind": "StorageV2",
+              "properties": {
+                "isHnsEnabled": true,
+                "minimumTlsVersion": "TLS1_2",
+                "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": false,
+                "allowSharedKeyAccess": false,
+                "defaultToOAuthAuthentication": true,
+                "publicNetworkAccess": "Disabled",
+                "networkAcls": {
+                  "bypass": "None",
+                  "defaultAction": "Deny"
+                },
+                "encryption": {
+                  "keySource": "Microsoft.Storage",
+                  "requireInfrastructureEncryption": true,
+                  "services": {
+                    "blob": {
+                      "enabled": true,
+                      "keyType": "Account"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices",
+              "apiVersion": "2023-05-01",
+              "name": "[format('{0}/{1}', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default')]",
+              "properties": {
+                "deleteRetentionPolicy": {
+                  "enabled": true,
+                  "days": 30
+                },
+                "containerDeleteRetentionPolicy": {
+                  "enabled": true,
+                  "days": 30
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2023-05-01",
+              "name": "[format('{0}/{1}/{2}', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default', 'landing')]",
+              "properties": {
+                "publicAccess": "None"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default')]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "zones",
+                "count": "[length(variables('services'))]"
+              },
+              "type": "Microsoft.Network/privateDnsZones",
+              "apiVersion": "2024-06-01",
+              "name": "[variables('services')[copyIndex()].zone]",
+              "location": "global",
+              "tags": "[parameters('tags')]"
+            },
+            {
+              "copy": {
+                "name": "links",
+                "count": "[length(variables('services'))]"
+              },
+              "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+              "apiVersion": "2024-06-01",
+              "name": "[format('{0}/{1}', variables('services')[copyIndex()].zone, format('{0}-{1}-dns', parameters('namePrefix'), variables('services')[copyIndex()].group))]",
+              "location": "global",
+              "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                  "id": "[parameters('vnetId')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', variables('services')[copyIndex()].zone)]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "endpoints",
+                "count": "[length(variables('services'))]",
+                "mode": "serial",
+                "batchSize": 1
+              },
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}-{1}-pe', parameters('namePrefix'), variables('services')[copyIndex()].group)]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "subnet": {
+                  "id": "[parameters('subnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                  {
+                    "name": "[variables('services')[copyIndex()].group]",
+                    "properties": {
+                      "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)))]",
+                      "groupIds": [
+                        "[variables('services')[copyIndex()].group]"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)))]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "zoneGroups",
+                "count": "[length(variables('services'))]"
+              },
+              "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+              "apiVersion": "2024-05-01",
+              "name": "[format('{0}/{1}', format('{0}-{1}-pe', parameters('namePrefix'), variables('services')[copyIndex()].group), 'storage')]",
+              "properties": {
+                "privateDnsZoneConfigs": [
+                  {
+                    "name": "[variables('services')[copyIndex()].group]",
+                    "properties": {
+                      "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('services')[copyIndex()].zone)]"
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateEndpoints', format('{0}-{1}-pe', parameters('namePrefix'), variables('services')[copyIndex()].group))]",
+                "[resourceId('Microsoft.Network/privateDnsZones', variables('services')[copyIndex()].zone)]"
+              ]
+            },
+            {
+              "condition": "[not(empty(parameters('dataPrincipalId')))]",
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[format('Microsoft.Storage/storageAccounts/{0}/blobServices/{1}/containers/{2}', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default', 'landing')]",
+              "name": "[guid(resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default', 'landing'), parameters('dataPrincipalId'), 'Storage Blob Data Contributor')]",
+              "properties": {
+                "principalId": "[parameters('dataPrincipalId')]",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+                "principalType": "ServicePrincipal"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default', 'landing')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Storage/storageAccounts/{0}/blobServices/{1}', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default')]",
+              "name": "central-logs",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "storageId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)))]"
+            },
+            "dfsEndpoint": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id))), '2023-05-01').primaryEndpoints.dfs]"
+            },
+            "containerName": {
+              "type": "string",
+              "value": "landing"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "epicEndpoint",
+        "monitoring",
+        "network"
+      ]
+    }
+  },
+  "outputs": {
+    "connections": {
+      "type": "object",
+      "value": {
+        "virtualNetworkId": "[reference('network').outputs.vnetId.value]",
+        "clientVirtualMachineId": "[reference('client').outputs.vmId.value]",
+        "clientPrivateIp": "[reference('client').outputs.privateIp.value]",
+        "bastionId": "[reference('network').outputs.bastionId.value]",
+        "egressPublicIp": "[reference('network').outputs.egressPublicIp.value]",
+        "logAnalyticsWorkspaceId": "[reference('monitoring').outputs.workspaceId.value]",
+        "providerPrivateEndpointId": "[if(parameters('publicSql'), '', reference('epicEndpoint').outputs.endpointId.value)]",
+        "customerCapacityId": "[if(parameters('customerFabric'), reference('capacity').outputs.capacityId.value, '')]",
+        "customerCapacityName": "[if(parameters('customerFabric'), reference('capacity').outputs.capacityName.value, '')]",
+        "landingStorageId": "[if(parameters('customerFabric'), reference('storage').outputs.storageId.value, '')]",
+        "landingDfsEndpoint": "[if(parameters('customerFabric'), reference('storage').outputs.dfsEndpoint.value, '')]"
+      }
+    }
+  }
+}

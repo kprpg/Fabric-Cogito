@@ -1,0 +1,408 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "10314523391909541524"
+    }
+  },
+  "parameters": {
+    "namePrefix": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "addressPrefix": {
+      "type": "string"
+    },
+    "publicSql": {
+      "type": "bool"
+    },
+    "httpsAllowedFqdns": {
+      "type": "array"
+    },
+    "sqlServiceTags": {
+      "type": "array"
+    },
+    "logAnalyticsWorkspaceId": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "variables": {
+    "copy": [
+      {
+        "name": "publicSqlRules",
+        "count": "[length(if(parameters('publicSql'), parameters('sqlServiceTags'), createArray()))]",
+        "input": {
+          "name": "[format('AllowApprovedPublicSql-{0}', copyIndex('publicSqlRules'))]",
+          "properties": {
+            "priority": "[add(300, copyIndex('publicSqlRules'))]",
+            "direction": "Outbound",
+            "access": "Allow",
+            "protocol": "Tcp",
+            "sourcePortRange": "*",
+            "destinationPortRange": "1433",
+            "sourceAddressPrefix": "[variables('workloadPrefix')]",
+            "destinationAddressPrefix": "[if(parameters('publicSql'), parameters('sqlServiceTags'), createArray())[copyIndex('publicSqlRules')]]"
+          }
+        }
+      }
+    ],
+    "workloadPrefix": "[cidrSubnet(parameters('addressPrefix'), 24, 0)]",
+    "endpointPrefix": "[cidrSubnet(parameters('addressPrefix'), 24, 1)]",
+    "firewallPrefix": "[cidrSubnet(parameters('addressPrefix'), 24, 2)]",
+    "bastionPrefix": "[cidrSubnet(parameters('addressPrefix'), 24, 3)]",
+    "sqlFirewallRules": "[if(parameters('publicSql'), createArray(createObject('name', 'ApprovedFabricTds', 'ruleType', 'NetworkRule', 'ipProtocols', createArray('TCP'), 'sourceAddresses', createArray(variables('workloadPrefix')), 'destinationAddresses', parameters('sqlServiceTags'), 'destinationPorts', createArray('1433'))), createArray())]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-client-nsg', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "securityRules": "[concat(createArray(createObject('name', 'AllowBastionRdp', 'properties', createObject('priority', 100, 'direction', 'Inbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRange', '3389', 'sourceAddressPrefix', variables('bastionPrefix'), 'destinationAddressPrefix', variables('workloadPrefix'))), createObject('name', 'DenyOtherInbound', 'properties', createObject('priority', 4096, 'direction', 'Inbound', 'access', 'Deny', 'protocol', '*', 'sourcePortRange', '*', 'destinationPortRange', '*', 'sourceAddressPrefix', '*', 'destinationAddressPrefix', '*')), createObject('name', 'AllowAzureDns', 'properties', createObject('priority', 100, 'direction', 'Outbound', 'access', 'Allow', 'protocol', '*', 'sourcePortRange', '*', 'destinationPortRange', '53', 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', 'AzurePlatformDNS')), createObject('name', 'AllowFirewallDnsProxy', 'properties', createObject('priority', 105, 'direction', 'Outbound', 'access', 'Allow', 'protocol', '*', 'sourcePortRange', '*', 'destinationPortRange', '53', 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', variables('firewallPrefix'))), createObject('name', 'AllowAzureVmAgent', 'properties', createObject('priority', 110, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRanges', createArray('80', '32526'), 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', '168.63.129.16')), createObject('name', 'AllowAzureInstanceMetadata', 'properties', createObject('priority', 120, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRange', '80', 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', 'AzurePlatformIMDS')), createObject('name', 'AllowPrivateServices', 'properties', createObject('priority', 200, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRanges', createArray('443', '1433'), 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', variables('endpointPrefix'))), createObject('name', 'AllowFirewallFilteredWeb', 'properties', createObject('priority', 210, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRanges', createArray('80', '443'), 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', 'Internet')), createObject('name', 'AllowWindowsActivation', 'properties', createObject('priority', 230, 'direction', 'Outbound', 'access', 'Allow', 'protocol', 'Tcp', 'sourcePortRange', '*', 'destinationPortRange', '1688', 'sourceAddressPrefix', variables('workloadPrefix'), 'destinationAddressPrefix', 'AzurePlatformLKM')), createObject('name', 'DenyOtherOutbound', 'properties', createObject('priority', 4096, 'direction', 'Outbound', 'access', 'Deny', 'protocol', '*', 'sourcePortRange', '*', 'destinationPortRange', '*', 'sourceAddressPrefix', '*', 'destinationAddressPrefix', '*'))), variables('publicSqlRules'))]"
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-egress-policy', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "sku": {
+          "tier": "Standard"
+        },
+        "threatIntelMode": "Deny",
+        "dnsSettings": {
+          "enableProxy": true
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}/{1}', format('{0}-egress-policy', parameters('namePrefix')), 'client-egress')]",
+      "properties": {
+        "priority": 100,
+        "ruleCollections": [
+          {
+            "name": "platform-and-sql",
+            "priority": 100,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": "[concat(createArray(createObject('name', 'WindowsActivation', 'ruleType', 'NetworkRule', 'ipProtocols', createArray('TCP'), 'sourceAddresses', createArray(variables('workloadPrefix')), 'destinationFqdns', createArray(format('azkms.{0}', environment().suffixes.storage)), 'destinationPorts', createArray('1688'))), variables('sqlFirewallRules'))]"
+          },
+          {
+            "name": "approved-https",
+            "priority": 200,
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "name": "MicrosoftManagedWindowsUpdate",
+                "ruleType": "ApplicationRule",
+                "sourceAddresses": [
+                  "[variables('workloadPrefix')]"
+                ],
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "fqdnTags": [
+                  "WindowsUpdate"
+                ]
+              },
+              {
+                "name": "EntraFabricAndApprovedManagement",
+                "ruleType": "ApplicationRule",
+                "sourceAddresses": [
+                  "[variables('workloadPrefix')]"
+                ],
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "targetFqdns": "[parameters('httpsAllowedFqdns')]"
+              }
+            ]
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies', format('{0}-egress-policy', parameters('namePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-egress-ip', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-bastion-ip', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-vnet', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('addressPrefix')]"
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}/{1}', format('{0}-vnet', parameters('namePrefix')), 'AzureFirewallSubnet')]",
+      "properties": {
+        "addressPrefix": "[variables('firewallPrefix')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}/{1}', format('{0}-vnet', parameters('namePrefix')), 'AzureBastionSubnet')]",
+      "properties": {
+        "addressPrefix": "[variables('bastionPrefix')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureFirewallSubnet')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/azureFirewalls",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-egress', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "sku": {
+          "name": "AZFW_VNet",
+          "tier": "Standard"
+        },
+        "firewallPolicy": {
+          "id": "[resourceId('Microsoft.Network/firewallPolicies', format('{0}-egress-policy', parameters('namePrefix')))]"
+        },
+        "ipConfigurations": [
+          {
+            "name": "primary",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureFirewallSubnet')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-egress-ip', parameters('namePrefix')))]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-egress-ip', parameters('namePrefix')))]",
+        "[resourceId('Microsoft.Network/firewallPolicies', format('{0}-egress-policy', parameters('namePrefix')))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureFirewallSubnet')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-client-routes', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "disableBgpRoutePropagation": true,
+        "routes": [
+          {
+            "name": "DefaultViaFirewall",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[reference(resourceId('Microsoft.Network/azureFirewalls', format('{0}-egress', parameters('namePrefix'))), '2024-05-01').ipConfigurations[0].properties.privateIPAddress]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/azureFirewalls', format('{0}-egress', parameters('namePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}/{1}', format('{0}-vnet', parameters('namePrefix')), 'clients')]",
+      "properties": {
+        "addressPrefix": "[variables('workloadPrefix')]",
+        "defaultOutboundAccess": false,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', format('{0}-client-nsg', parameters('namePrefix')))]"
+        },
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', format('{0}-client-routes', parameters('namePrefix')))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureBastionSubnet')]",
+        "[resourceId('Microsoft.Network/routeTables', format('{0}-client-routes', parameters('namePrefix')))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', format('{0}-client-nsg', parameters('namePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}/{1}', format('{0}-vnet', parameters('namePrefix')), 'private-endpoints')]",
+      "properties": {
+        "addressPrefix": "[variables('endpointPrefix')]",
+        "defaultOutboundAccess": false,
+        "privateEndpointNetworkPolicies": "Disabled"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'clients')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/bastionHosts",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-bastion', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "enableTunneling": false,
+        "enableIpConnect": false,
+        "enableShareableLink": false,
+        "ipConfigurations": [
+          {
+            "name": "primary",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureBastionSubnet')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-bastion-ip', parameters('namePrefix')))]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-bastion-ip', parameters('namePrefix')))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'AzureBastionSubnet')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "scope": "[format('Microsoft.Network/azureFirewalls/{0}', format('{0}-egress', parameters('namePrefix')))]",
+      "name": "central-logs",
+      "properties": {
+        "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+        "logs": [
+          {
+            "categoryGroup": "allLogs",
+            "enabled": true
+          }
+        ],
+        "metrics": [
+          {
+            "category": "AllMetrics",
+            "enabled": true
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/azureFirewalls', format('{0}-egress', parameters('namePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "scope": "[format('Microsoft.Network/bastionHosts/{0}', format('{0}-bastion', parameters('namePrefix')))]",
+      "name": "central-logs",
+      "properties": {
+        "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+        "logs": [
+          {
+            "categoryGroup": "allLogs",
+            "enabled": true
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/bastionHosts', format('{0}-bastion', parameters('namePrefix')))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "vnetId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/virtualNetworks', format('{0}-vnet', parameters('namePrefix')))]"
+    },
+    "workloadSubnetId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'clients')]"
+    },
+    "endpointSubnetId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('namePrefix')), 'private-endpoints')]"
+    },
+    "egressPublicIp": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', format('{0}-egress-ip', parameters('namePrefix'))), '2024-05-01').ipAddress]"
+    },
+    "bastionId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/bastionHosts', format('{0}-bastion', parameters('namePrefix')))]"
+    },
+    "dnsProxyIp": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/azureFirewalls', format('{0}-egress', parameters('namePrefix'))), '2024-05-01').ipConfigurations[0].properties.privateIPAddress]"
+    }
+  }
+}

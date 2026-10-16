@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sqlServerFqdn": { "value": "REPLACE-WITH-PROVIDER-RETURNED-SQL-HOSTNAME.datawarehouse.fabric.microsoft.com" },
+    "sqlPrivateIp": { "value": "10.61.1.10" },
+    "virtualNetworkId": {
+      "value": "/subscriptions/REPLACE-CUSTOMER-SUBSCRIPTION/resourceGroups/REPLACE-CUSTOMER-RG/providers/Microsoft.Network/virtualNetworks/REPLACE-VNET"
+    },
+    "tags": { "value": { "environment": "synthetic-pilot" } }
+  }
+}

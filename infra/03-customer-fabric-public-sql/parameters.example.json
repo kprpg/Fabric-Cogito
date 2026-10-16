@@ -1,0 +1,50 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": {
+        "namePrefix": "cogfpub",
+        "location": "eastus2",
+        "vnetAddressPrefix": "10.62.0.0/16",
+        "adminUsername": "cogitoadmin",
+        "vmSize": "Standard_D4s_v5",
+        "httpsAllowedFqdns": [
+          "login.microsoftonline.com",
+          "*.msauth.net",
+          "*.msftauth.net",
+          "api.fabric.microsoft.com",
+          "api.powerbi.com",
+          "*.powerbi.com",
+          "*.servicebus.windows.net",
+          "*.frontend.clouddatahub.net",
+          "*.gateway.prod.island.powerapps.com",
+          "download.microsoft.com",
+          "go.microsoft.com",
+          "aka.ms"
+        ],
+        "sqlServiceTags": ["PowerBI", "Sql"],
+        "tags": {
+          "environment": "synthetic-pilot",
+          "owner": "customer-data-platform",
+          "dataClassification": "no-phi"
+        }
+      }
+    },
+    "fabric": {
+      "value": {
+        "sku": "F2",
+        "administrators": ["fabric-admin@customer.example"],
+        "landingDataPrincipalId": ""
+      }
+    },
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/REPLACE-CUSTOMER-SUBSCRIPTION/resourceGroups/REPLACE-SECRETS-RG/providers/Microsoft.KeyVault/vaults/REPLACE-VAULT"
+        },
+        "secretName": "cogito-client-admin-password"
+      }
+    }
+  }
+}

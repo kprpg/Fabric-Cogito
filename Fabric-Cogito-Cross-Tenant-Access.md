@@ -6,6 +6,13 @@
 **Scope:** The two supplied Microsoft Learn articles, their relevant Microsoft platform/API references, and public evidence about the proposed Epic relationship.  
 **Important:** This is a documented Fabric architecture with a **conditional Epic example**, not a verified drawing of Epic's production environment.
 
+**Implementation follow-up (October 16, 2026):** [Four ARM/Bicep deployment combinations](./infra/README.md)
+and the [architecture decision record](./infra/ARCHITECTURE.md) now distinguish
+Azure-only/customer-Fabric consumers and public/workspace-private SQL paths.
+The decision record adds Microsoft's explicit cross-tenant **workspace-level**
+Private Link procedure; retain this report's separate identity, DNS, runtime, and
+provider-validation gates rather than generalizing tenant-level restrictions.
+
 ## Executive summary
 
 The supplied articles describe cross-tenant **SQL access to provider-hosted Fabric Warehouses and SQL analytics endpoints**, using a guest organization's own Microsoft Entra identities. Fabric creates provider-side identity representations, and the provider grants those representations access to the relevant data; this is explicitly different from both B2B guest-user collaboration and OneLake external data sharing.[^guest-overview][^provider-model] If Epic hosts the relevant Cogito Cloud warehouse in an Epic-controlled Fabric tenant, **Epic would be the provider and the hospital's Entra tenant would be the guest**, but neither supplied article establishes that Epic actually uses this feature.[^provider-model][^epic-direction] The source warehouse remains provider-hosted, while SQL results travel to the guest client; this must not be interpreted as a guarantee that clients cannot export or retain results.[^provider-model][^connectivity] Guests do not need their own Fabric deployment for this access pattern, whereas provider participation remains gated: Microsoft describes the guest capability as generally available but the provider capability as a limited preview.[^guest-overview][^provider-model]

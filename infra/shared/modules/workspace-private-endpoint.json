@@ -1,0 +1,116 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "3797100939961451412"
+    }
+  },
+  "parameters": {
+    "namePrefix": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "subnetId": {
+      "type": "string"
+    },
+    "vnetId": {
+      "type": "string"
+    },
+    "providerPrivateLinkServiceId": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Epic-owned Microsoft.Fabric/privateLinkServicesForFabric resource ID, not a workspace GUID or Microsoft.Network/privateLinkServices ID."
+      }
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-epic-workspace-pe', parameters('namePrefix'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        },
+        "manualPrivateLinkServiceConnections": [
+          {
+            "name": "epic-approval-required",
+            "properties": {
+              "privateLinkServiceId": "[parameters('providerPrivateLinkServiceId')]",
+              "groupIds": [
+                "workspace"
+              ],
+              "requestMessage": "Customer requests access to the agreed Cogito workspace. Provider approval and separate data authorization required."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2024-06-01",
+      "name": "privatelink.fabric.microsoft.com",
+      "location": "global",
+      "tags": "[parameters('tags')]"
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2024-06-01",
+      "name": "[format('{0}/{1}', 'privatelink.fabric.microsoft.com', format('{0}-fabric-dns', parameters('namePrefix')))]",
+      "location": "global",
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[parameters('vnetId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.fabric.microsoft.com')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}/{1}', format('{0}-epic-workspace-pe', parameters('namePrefix')), 'fabric')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "fabric",
+            "properties": {
+              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.fabric.microsoft.com')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', format('{0}-epic-workspace-pe', parameters('namePrefix')))]",
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.fabric.microsoft.com')]"
+      ]
+    }
+  ],
+  "outputs": {
+    "endpointId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/privateEndpoints', format('{0}-epic-workspace-pe', parameters('namePrefix')))]"
+    },
+    "dnsZoneId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.fabric.microsoft.com')]"
+    },
+    "dnsHandoff": {
+      "type": "string",
+      "value": "After Epic approves, inspect the endpoint DNS configuration. Deploy shared/consumer-sql-dns only with the actual guest-specific SQL hostname and the verified SQL member IP."
+    }
+  }
+}
