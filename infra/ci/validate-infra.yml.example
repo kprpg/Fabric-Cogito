@@ -1,0 +1,30 @@
+name: Validate infrastructure
+
+on:
+  push:
+    paths: ['infra/**', '.github/workflows/validate-infra.yml']
+  pull_request:
+    paths: ['infra/**', '.github/workflows/validate-infra.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install pinned Bicep compiler
+        shell: bash
+        run: |
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+            https://github.com/Azure/bicep/releases/download/v0.38.33/bicep-linux-x64 \
+            -o "$RUNNER_TEMP/bicep"
+          echo "07e28411c2cb3a731660a32bb735268c2d1506c564bcea613eed1323e9926712  $RUNNER_TEMP/bicep" | sha256sum --check
+          chmod +x "$RUNNER_TEMP/bicep"
+          echo "BICEP=$RUNNER_TEMP/bicep" >> "$GITHUB_ENV"
+      - name: Compile, lint, and check ARM parity
+        run: python3 infra/scripts/validate.py
+      - name: Check architecture and parameter contracts
+        run: python3 -m unittest discover -s infra/tests -v

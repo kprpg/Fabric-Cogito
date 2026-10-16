@@ -1,0 +1,80 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "12625404266406807555"
+    }
+  },
+  "parameters": {
+    "sqlServerFqdn": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Exact SQL hostname from the provider-generated guestTenantId + privateLinkType=Workspace connection string. No protocol, port, or database."
+      }
+    },
+    "sqlPrivateIp": {
+      "type": "string",
+      "minLength": 7,
+      "metadata": {
+        "description": "SQL member private IPv4 address verified from the approved workspace private endpoint NIC. Do not use an arbitrary first IP."
+      }
+    },
+    "virtualNetworkId": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2024-06-01",
+      "name": "[parameters('sqlServerFqdn')]",
+      "location": "global",
+      "tags": "[parameters('tags')]"
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/A",
+      "apiVersion": "2024-06-01",
+      "name": "[format('{0}/{1}', parameters('sqlServerFqdn'), '@')]",
+      "properties": {
+        "ttl": 300,
+        "aRecords": [
+          {
+            "ipv4Address": "[parameters('sqlPrivateIp')]"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', parameters('sqlServerFqdn'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2024-06-01",
+      "name": "[format('{0}/{1}', parameters('sqlServerFqdn'), 'sql-client-vnet')]",
+      "location": "global",
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[parameters('virtualNetworkId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', parameters('sqlServerFqdn'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "sqlServerFqdn": {
+      "type": "string",
+      "value": "[parameters('sqlServerFqdn')]"
+    }
+  }
+}

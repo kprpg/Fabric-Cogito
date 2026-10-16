@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "3308421745131501966"
+    }
+  },
+  "parameters": {
+    "privateLinkServiceName": {
+      "type": "string",
+      "minLength": 3,
+      "metadata": {
+        "description": "Deploy separately while signed into the Epic/provider tenant. This does not create or modify the workspace."
+      }
+    },
+    "workspaceId": {
+      "type": "string",
+      "minLength": 36,
+      "maxLength": 36
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Fabric/privateLinkServicesForFabric",
+      "apiVersion": "2024-06-01",
+      "name": "[parameters('privateLinkServiceName')]",
+      "location": "global",
+      "properties": {
+        "tenantId": "[tenant().tenantId]",
+        "workspaceId": "[parameters('workspaceId')]"
+      }
+    }
+  ],
+  "outputs": {
+    "privateLinkServiceResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Fabric/privateLinkServicesForFabric', parameters('privateLinkServiceName'))]"
+    },
+    "providerTenantId": {
+      "type": "string",
+      "value": "[tenant().tenantId]"
+    },
+    "workspaceId": {
+      "type": "string",
+      "value": "[parameters('workspaceId')]"
+    }
+  }
+}

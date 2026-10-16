@@ -1,0 +1,244 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "3068003075437233941"
+    }
+  },
+  "parameters": {
+    "namePrefix": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "subnetId": {
+      "type": "string"
+    },
+    "vnetId": {
+      "type": "string"
+    },
+    "logAnalyticsWorkspaceId": {
+      "type": "string"
+    },
+    "dataPrincipalId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "variables": {
+    "services": [
+      {
+        "group": "blob",
+        "zone": "[format('privatelink.blob.{0}', environment().suffixes.storage)]"
+      },
+      {
+        "group": "dfs",
+        "zone": "[format('privatelink.dfs.{0}', environment().suffixes.storage)]"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "Standard_ZRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "isHnsEnabled": true,
+        "minimumTlsVersion": "TLS1_2",
+        "supportsHttpsTrafficOnly": true,
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": false,
+        "defaultToOAuthAuthentication": true,
+        "publicNetworkAccess": "Disabled",
+        "networkAcls": {
+          "bypass": "None",
+          "defaultAction": "Deny"
+        },
+        "encryption": {
+          "keySource": "Microsoft.Storage",
+          "requireInfrastructureEncryption": true,
+          "services": {
+            "blob": {
+              "enabled": true,
+              "keyType": "Account"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default')]",
+      "properties": {
+        "deleteRetentionPolicy": {
+          "enabled": true,
+          "days": 30
+        },
+        "containerDeleteRetentionPolicy": {
+          "enabled": true,
+          "days": 30
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}/{2}', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default', 'landing')]",
+      "properties": {
+        "publicAccess": "None"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default')]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "zones",
+        "count": "[length(variables('services'))]"
+      },
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2024-06-01",
+      "name": "[variables('services')[copyIndex()].zone]",
+      "location": "global",
+      "tags": "[parameters('tags')]"
+    },
+    {
+      "copy": {
+        "name": "links",
+        "count": "[length(variables('services'))]"
+      },
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2024-06-01",
+      "name": "[format('{0}/{1}', variables('services')[copyIndex()].zone, format('{0}-{1}-dns', parameters('namePrefix'), variables('services')[copyIndex()].group))]",
+      "location": "global",
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[parameters('vnetId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', variables('services')[copyIndex()].zone)]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "endpoints",
+        "count": "[length(variables('services'))]",
+        "mode": "serial",
+        "batchSize": 1
+      },
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}-{1}-pe', parameters('namePrefix'), variables('services')[copyIndex()].group)]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        },
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('services')[copyIndex()].group]",
+            "properties": {
+              "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)))]",
+              "groupIds": [
+                "[variables('services')[copyIndex()].group]"
+              ]
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)))]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "zoneGroups",
+        "count": "[length(variables('services'))]"
+      },
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2024-05-01",
+      "name": "[format('{0}/{1}', format('{0}-{1}-pe', parameters('namePrefix'), variables('services')[copyIndex()].group), 'storage')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[variables('services')[copyIndex()].group]",
+            "properties": {
+              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('services')[copyIndex()].zone)]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', format('{0}-{1}-pe', parameters('namePrefix'), variables('services')[copyIndex()].group))]",
+        "[resourceId('Microsoft.Network/privateDnsZones', variables('services')[copyIndex()].zone)]"
+      ]
+    },
+    {
+      "condition": "[not(empty(parameters('dataPrincipalId')))]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.Storage/storageAccounts/{0}/blobServices/{1}/containers/{2}', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default', 'landing')]",
+      "name": "[guid(resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default', 'landing'), parameters('dataPrincipalId'), 'Storage Blob Data Contributor')]",
+      "properties": {
+        "principalId": "[parameters('dataPrincipalId')]",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default', 'landing')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "scope": "[format('Microsoft.Storage/storageAccounts/{0}/blobServices/{1}', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default')]",
+      "name": "central-logs",
+      "properties": {
+        "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+        "logs": [
+          {
+            "categoryGroup": "allLogs",
+            "enabled": true
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)), 'default')]"
+      ]
+    }
+  ],
+  "outputs": {
+    "storageId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id)))]"
+    },
+    "dfsEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', format('{0}{1}', take(parameters('namePrefix'), 10), uniqueString(resourceGroup().id))), '2023-05-01').primaryEndpoints.dfs]"
+    },
+    "containerName": {
+      "type": "string",
+      "value": "landing"
+    }
+  }
+}
