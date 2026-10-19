@@ -1,0 +1,450 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1600" viewBox="0 0 2400 1600" fill="#092451" role="img" aria-labelledby="title desc">
+  <title id="title">ZAVA composite architecture: Epic Cogito Cloud, Azure and AWS, version 1</title>
+  <desc id="desc">Editable vector redraw of Customer-Composite-Architecure-Azure-AWS.png, using the visual language of the supplied architecture-and-implementation sample. The cloud panel shows Epic Azure Cogito on Fabric in non-production and production, SQL endpoints, Entra cross-tenant trust, ZAVA identities, groups and service principals, an Azure subscription with private endpoints, and a firewall. The hybrid panel retains the separate Epic-hosted Cogito platform and its firewall, the ZAVA Edge firewall, the Azure-to-Edge and Edge-to-AWS site-to-site VPNs, hospital locations with Cogito Report Viewer and unconfirmed Power BI, and Site A and Site B data centers. All seven source configuration items are retained. Matching A badges continue the Azure VPN across panels. Connections are undirected, as in the source. This is a conceptual restyling, not a validated deployment or a claim that Microsoft Copilot generated this file. The original PNG is retained unchanged.</desc>
+  <metadata>Source author: Sam Cook. Source date: 2026-07-01. Source drawing label: cogito-cloud-connectivity.vsdx. Redraw version: 1.</metadata>
+  <defs>
+    <linearGradient id="blue-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0759ce"/><stop offset="1" stop-color="#06489c"/>
+    </linearGradient>
+    <linearGradient id="teal-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#008470"/><stop offset="1" stop-color="#00634f"/>
+    </linearGradient>
+    <linearGradient id="purple-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6331b7"/><stop offset="1" stop-color="#4c338d"/>
+    </linearGradient>
+    <linearGradient id="epic-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e81765"/><stop offset="1" stop-color="#c61b51"/>
+    </linearGradient>
+    <linearGradient id="gold-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a58600"/><stop offset="1" stop-color="#8c7400"/>
+    </linearGradient>
+    <linearGradient id="cyan-ribbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0098b7"/><stop offset="1" stop-color="#007c9c"/>
+    </linearGradient>
+    <linearGradient id="blue-wash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e6f3ff"/><stop offset="1" stop-color="#f4faff"/>
+    </linearGradient>
+    <linearGradient id="purple-wash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eee5fb"/><stop offset="1" stop-color="#faf7ff"/>
+    </linearGradient>
+    <linearGradient id="green-wash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#def2e9"/><stop offset="1" stop-color="#f6fcf9"/>
+    </linearGradient>
+    <linearGradient id="fabric-light" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a8ffe1"/><stop offset="0.5" stop-color="#42d8af"/><stop offset="1" stop-color="#00977f"/>
+    </linearGradient>
+    <linearGradient id="fabric-dark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00a18c"/><stop offset="1" stop-color="#005c57"/>
+    </linearGradient>
+    <linearGradient id="azure-facet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#56d8f4"/><stop offset="1" stop-color="#0061cc"/>
+    </linearGradient>
+    <filter id="card-shadow" x="-10%" y="-15%" width="120%" height="135%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#29496a" flood-opacity="0.08"/>
+    </filter>
+    <symbol id="fabric" viewBox="0 0 64 64">
+      <path d="M17 11 Q18 8 23 7 L59 2 L51 25 L11 32 Z" fill="url(#fabric-light)"/>
+      <path d="M11 30 L51 23 L44 43 L4 50 Z" fill="#00a68e"/>
+      <path d="M5 47 L44 40 L39 57 L9 63 Q0 64 3 55 Z" fill="url(#fabric-dark)"/>
+      <path d="M18 10 L34 7 L26 30 L11 32 Z" fill="#a2f5d4" opacity="0.7"/>
+      <path d="M11 32 L27 29 L20 48 L4 50 Z" fill="#006f6c" opacity="0.5"/>
+    </symbol>
+    <symbol id="entra" viewBox="0 0 64 64">
+      <path d="M32 2 L62 33 L32 62 L2 33 Z" fill="url(#azure-facet)"/>
+      <path d="M32 2 L32 23 L12 43 L2 33 Z" fill="#59d7ef"/>
+      <path d="M32 23 L48 39 L32 54 L16 39 Z" fill="#d0f4ff"/>
+      <path d="M32 2 L62 33 L48 39 L32 23 Z" fill="#0078c9"/>
+      <path d="M32 54 L48 39 L62 33 L32 62 Z" fill="#074999"/>
+    </symbol>
+    <symbol id="database" viewBox="0 0 64 64">
+      <path d="M10 13 V49 C10 64 54 64 54 49 V13" fill="#258ac5"/>
+      <ellipse cx="32" cy="13" rx="22" ry="10" fill="#69c8ec"/>
+      <path d="M10 29 C10 44 54 44 54 29 M10 46 C10 61 54 61 54 46" fill="none" stroke="#a4e5fa" stroke-width="2"/>
+      <ellipse cx="32" cy="13" rx="16" ry="5" fill="#d9f6ff" opacity="0.6"/>
+    </symbol>
+    <symbol id="endpoint" viewBox="0 0 64 64">
+      <path d="M19 13 L4 32 L19 51 M45 13 L60 32 L45 51" fill="none" stroke="#008fc9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M32 13 V51" stroke="#0a97ca" stroke-width="4"/>
+      <circle cx="32" cy="32" r="10" fill="#84c92b"/>
+    </symbol>
+    <symbol id="network" viewBox="0 0 64 64">
+      <path d="M32 14 V32 M14 49 L32 32 L50 49" fill="none" stroke="#0a90c5" stroke-width="4"/>
+      <circle cx="32" cy="10" r="9" fill="#0096d3"/>
+      <circle cx="12" cy="51" r="9" fill="#80c52a"/>
+      <circle cx="52" cy="51" r="9" fill="#80c52a"/>
+      <circle cx="32" cy="32" r="7" fill="#57c8e7"/>
+    </symbol>
+    <symbol id="firewall" viewBox="0 0 64 64">
+      <rect x="5" y="9" width="54" height="46" rx="5" fill="#f9e5ca" stroke="#a46919" stroke-width="3"/>
+      <path d="M5 24 H59 M5 40 H59 M23 9 V24 M43 9 V24 M14 24 V40 M35 24 V40 M53 24 V40 M23 40 V55 M43 40 V55" fill="none" stroke="#b97926" stroke-width="2.5"/>
+    </symbol>
+    <symbol id="shield" viewBox="0 0 64 64">
+      <path d="M32 3 Q43 11 57 11 V29 Q57 49 32 62 Q7 49 7 29 V11 Q21 11 32 3 Z" fill="#075ba8"/>
+      <path d="M20 32 L29 41 L46 22" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="servers" viewBox="0 0 64 64">
+      <rect x="7" y="5" width="50" height="24" rx="4" fill="#126fba"/>
+      <rect x="7" y="35" width="50" height="24" rx="4" fill="#07549d"/>
+      <circle cx="17" cy="17" r="3" fill="#6be2c1"/><circle cx="17" cy="47" r="3" fill="#6be2c1"/>
+      <path d="M29 17 H47 M29 47 H47" stroke="#caebff" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="check" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="30" fill="#25a94c"/>
+      <path d="M17 32 L28 43 L48 21" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="scope" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="28" fill="#fff" stroke="#bc1452" stroke-width="4"/>
+      <path d="M32 15 V36" stroke="#bc1452" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="32" cy="47" r="3.5" fill="#bc1452"/>
+    </symbol>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; }
+      .main-title { font-size: 48px; font-weight: 700; fill: #071b77; }
+      .main-subtitle { font-size: 32px; font-weight: 700; fill: #10216a; }
+      .tagline { font-size: 23px; fill: #314b79; }
+      .section-title { font-size: 28px; font-weight: 700; fill: #fff; }
+      .section-subtitle { font-size: 20px; fill: #fff; }
+      .zone-title { font-size: 24px; font-weight: 700; fill: #fff; }
+      .zone-subtitle { font-size: 18px; fill: #fff; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .compact { font-size: 19px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #304a6d; }
+      .micro { font-size: 17px; fill: #395371; }
+      .center { text-anchor: middle; }
+      .white { fill: #fff; }
+      .card { fill: #fff; stroke: #b6d2e6; stroke-width: 1.4; filter: url(#card-shadow); }
+      .trust-link { fill: none; stroke: #7045b4; stroke-width: 3; stroke-dasharray: 8 6; stroke-linecap: round; }
+      .sql-link { fill: none; stroke: #0866b5; stroke-width: 3.5; stroke-linecap: round; }
+      .vpn-link { fill: none; stroke: #00966d; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+      .local-link { fill: none; stroke: #496782; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+      .step-heading { font-size: 21px; font-weight: 700; fill: #fff; }
+      .step-owner { font-size: 22px; font-weight: 700; }
+      .step-body { font-size: 20px; }
+    </style>
+  </defs>
+
+  <rect width="2400" height="1600" fill="#fff"/>
+  <rect width="2400" height="152" fill="#f6faff"/>
+  <text x="44" y="80" font-size="70" font-weight="700" fill="#003b7d">ZAVA</text>
+  <text x="48" y="122" class="micro" letter-spacing="2">CUSTOMER ARCHITECTURE</text>
+  <text x="1180" y="58" class="main-title center">ZAVA Composite Architecture</text>
+  <text x="1180" y="108" class="main-subtitle center">Epic Cogito Cloud, Azure &amp; AWS</text>
+  <text x="1180" y="144" class="tagline center">Cross-tenant identity. Private endpoints. Connected hybrid locations.</text>
+  <g id="technology-labels" aria-label="Epic, Microsoft, Azure, AWS and on-premises">
+    <text x="1944" y="66" font-size="54" font-weight="700" font-style="italic" fill="#c9094e">Epic</text>
+    <path d="M2080 28 V78" stroke="#a8b9d3" stroke-width="1.5"/>
+    <rect x="2104" y="30" width="21" height="21" fill="#f25022"/>
+    <rect x="2129" y="30" width="21" height="21" fill="#7fba00"/>
+    <rect x="2104" y="55" width="21" height="21" fill="#00a4ef"/>
+    <rect x="2129" y="55" width="21" height="21" fill="#ffb900"/>
+    <text x="2166" y="65" font-size="33" font-weight="600" fill="#51607b">Microsoft</text>
+    <text x="2350" y="115" class="micro" text-anchor="end" letter-spacing="1">AZURE + AWS + ON-PREMISES</text>
+  </g>
+
+  <g id="cloud-architecture" aria-label="Cloud architecture: Epic Azure and ZAVA Azure with Entra ID">
+    <rect x="24" y="168" width="1370" height="666" rx="12" fill="#f9fcff" stroke="#8ac5e4" stroke-width="1.5"/>
+    <path d="M36 168 H1382 Q1394 168 1394 180 V252 H24 V180 Q24 168 36 168 Z" fill="url(#blue-ribbon)"/>
+    <text x="44" y="207" class="section-title">1. Cloud architecture - Epic + ZAVA Azure</text>
+    <text x="44" y="237" class="section-subtitle">Identity trust and SQL endpoint connectivity are shown as separate relationships</text>
+
+    <g id="epic-azure-boundary" data-boundary="true" aria-label="Epic Azure boundary">
+      <rect x="44" y="278" width="430" height="360" rx="10" fill="#fff4f8" stroke="#e878a3" stroke-width="1.5"/>
+      <path d="M54 278 H464 Q474 278 474 288 V340 H44 V288 Q44 278 54 278 Z" fill="url(#epic-ribbon)"/>
+      <text x="259" y="308" class="zone-title center">Epic Azure</text>
+      <text x="259" y="335" class="zone-subtitle center">Cogito Cloud on Microsoft Fabric</text>
+      <g id="epic-cogito-fabric" data-node="true">
+        <rect x="60" y="362" width="398" height="100" rx="10" class="card"/>
+        <use href="#fabric" x="80" y="385" width="48" height="48"/>
+        <text x="150" y="401" class="heading">Cogito on Fabric</text>
+        <text x="150" y="435" class="body">Non-production + production</text>
+      </g>
+      <g id="epic-sql-endpoints" data-node="true">
+        <rect x="110" y="514" width="298" height="92" rx="10" fill="#fff3c7" stroke="#cfb34f" stroke-width="1.5"/>
+        <use href="#database" x="128" y="536" width="42" height="42"/>
+        <text x="186" y="551" class="heading">SQL endpoints</text>
+        <text x="186" y="580" class="small">Customer access</text>
+      </g>
+    </g>
+
+    <g id="zava-azure-boundary" data-boundary="true" aria-label="ZAVA Azure and Entra ID boundary">
+      <rect x="854" y="278" width="520" height="526" rx="10" fill="url(#blue-wash)" stroke="#59b5e4" stroke-width="1.5"/>
+      <path d="M864 278 H1364 Q1374 278 1374 288 V340 H854 V288 Q854 278 864 278 Z" fill="url(#blue-ribbon)"/>
+      <text x="1114" y="308" class="zone-title center">ZAVA Azure + Entra ID</text>
+      <text x="1114" y="335" class="zone-subtitle center">Customer identities and private access</text>
+      <g id="zava-identities" data-node="true">
+        <rect x="874" y="362" width="480" height="100" rx="10" class="card"/>
+        <use href="#entra" x="890" y="385" width="46" height="46"/>
+        <text x="952" y="401" class="heading">ZAVA identities, groups</text>
+        <text x="952" y="435" class="body">and service principals</text>
+      </g>
+      <g id="azure-subscription-private-endpoints" data-node="true">
+        <rect x="874" y="514" width="480" height="92" rx="10" fill="#e8f6ed" stroke="#7abc9a" stroke-width="1.5"/>
+        <use href="#endpoint" x="890" y="536" width="46" height="46"/>
+        <text x="952" y="551" class="heading">Azure subscription</text>
+        <text x="952" y="582" class="body">Private endpoints</text>
+      </g>
+      <g id="azure-firewall" data-node="true">
+        <rect x="1034" y="650" width="160" height="72" rx="9" class="card"/>
+        <use href="#firewall" x="1046" y="668" width="36" height="36"/>
+        <text x="1094" y="694" class="body">Firewall</text>
+      </g>
+      <path d="M1114 606 V650" class="local-link" data-link="private-endpoints-to-azure-firewall"/>
+      <path d="M1114 722 V746" class="vpn-link" data-link="azure-vpn-continuation"/>
+      <circle cx="1114" cy="764" r="18" fill="#fff" stroke="#00966d" stroke-width="2.5"/>
+      <text x="1114" y="772" class="heading center" style="fill:#00765d">A</text>
+      <text x="1114" y="796" class="micro center">Site-to-site VPN to ZAVA Edge - panel 2</text>
+    </g>
+
+    <g id="cross-tenant-relationships" aria-label="Entra trust and SQL endpoint relationships">
+      <path d="M474 412 H854" class="trust-link" data-link="entra-cross-tenant-trust"/>
+      <circle cx="474" cy="412" r="7" fill="#fff" stroke="#7045b4" stroke-width="2"/>
+      <circle cx="854" cy="412" r="7" fill="#fff" stroke="#7045b4" stroke-width="2"/>
+      <text x="664" y="383" class="heading center" style="fill:#6331a3">Cross-tenant trust</text>
+      <text x="664" y="450" class="small center">Microsoft Entra</text>
+      <path d="M408 560 H874" class="sql-link" data-link="sql-to-private-endpoints"/>
+      <text x="654" y="536" class="body center" style="fill:#075f9f">SQL endpoint connectivity</text>
+    </g>
+
+    <g id="identity-plane-note" data-note="true">
+      <rect x="44" y="660" width="370" height="144" rx="10" fill="url(#purple-wash)" stroke="#c4ace3" stroke-width="1.3"/>
+      <text x="62" y="693" class="compact" style="fill:#60369e">IDENTITY PLANE</text>
+      <text x="62" y="737" class="body">Entra cross-tenant trust</text>
+      <text x="62" y="768" class="body">between Epic and ZAVA.</text>
+    </g>
+    <g id="endpoint-path-note" data-note="true">
+      <rect x="430" y="660" width="404" height="144" rx="10" fill="#edf7ff" stroke="#a8cde7" stroke-width="1.3"/>
+      <text x="448" y="693" class="compact" style="fill:#075f9f">ENDPOINT CONNECTIVITY</text>
+      <text x="448" y="737" class="body">SQL endpoints connect to</text>
+      <text x="448" y="768" class="body">ZAVA private endpoints.</text>
+    </g>
+  </g>
+
+  <g id="hybrid-topology" aria-label="Epic hosted, ZAVA on-premises, Azure VPN and AWS VPN topology">
+    <rect x="1414" y="168" width="962" height="666" rx="12" fill="#f9fdfc" stroke="#81c5bb" stroke-width="1.5"/>
+    <path d="M1426 168 H2364 Q2376 168 2376 180 V252 H1414 V180 Q1414 168 1426 168 Z" fill="url(#teal-ribbon)"/>
+    <text x="1434" y="207" class="section-title">2. Hybrid topology - on-premises + AWS</text>
+    <text x="1434" y="237" class="section-subtitle">ZAVA Edge links cloud, Epic-hosted services and customer locations</text>
+
+    <g id="epic-hosted-boundary" data-boundary="true" aria-label="Separate Epic-hosted environment">
+      <rect x="1434" y="280" width="324" height="150" rx="10" fill="#fff4f8" stroke="#e878a3" stroke-width="1.4"/>
+      <text x="1450" y="310" class="small" style="fill:#a61d52;font-weight:700">Epic-hosted environment</text>
+      <g id="epic-hosted-cogito" data-node="true">
+        <rect x="1450" y="334" width="210" height="72" rx="8" class="card"/>
+        <text x="1555" y="362" class="body center" style="font-weight:700">Epic hosted</text>
+        <text x="1555" y="392" class="small center">Cogito platform</text>
+      </g>
+      <g id="epic-hosted-firewall" data-node="true">
+        <rect x="1674" y="334" width="68" height="72" rx="8" fill="#fff4df" stroke="#cda768" stroke-width="1.4"/>
+        <text x="1708" y="379" class="compact center">FW</text>
+      </g>
+    </g>
+
+    <g id="zava-on-premises-boundary" data-boundary="true" aria-label="ZAVA on-premises boundary including ZAVA Edge, hospital locations and data centers">
+      <rect x="1434" y="462" width="708" height="344" rx="10" fill="url(#blue-wash)" stroke="#7aafcf" stroke-width="1.5" stroke-dasharray="7 5"/>
+      <g id="edge-firewall" data-node="true">
+        <rect x="1538" y="532" width="76" height="54" rx="8" fill="#fff4df" stroke="#cda768" stroke-width="1.4"/>
+        <text x="1576" y="567" class="compact center">FW</text>
+      </g>
+      <g id="zava-edge" data-node="true">
+        <rect x="1646" y="510" width="272" height="98" rx="10" class="card"/>
+        <use href="#network" x="1664" y="533" width="48" height="48"/>
+        <text x="1730" y="554" class="heading">ZAVA Edge</text>
+        <text x="1730" y="585" class="small">On-premises hub</text>
+      </g>
+      <g id="hospital-locations" data-node="true">
+        <rect x="1454" y="654" width="208" height="122" rx="9" class="card"/>
+        <text x="1558" y="680" class="compact center">Hospital locations</text>
+        <text x="1558" y="711" class="micro center">Cogito Report Viewer</text>
+        <text x="1558" y="743" class="micro center" style="fill:#8a5e00">Power BI? (unconfirmed)</text>
+      </g>
+      <g id="site-a-data-center" data-node="true">
+        <rect x="1678" y="654" width="208" height="122" rx="9" class="card"/>
+        <use href="#servers" x="1761" y="668" width="42" height="42"/>
+        <text x="1782" y="737" class="heading center">Site A</text>
+        <text x="1782" y="764" class="small center">Data center</text>
+      </g>
+      <g id="site-b-data-center" data-node="true">
+        <rect x="1902" y="654" width="208" height="122" rx="9" class="card"/>
+        <use href="#servers" x="1985" y="668" width="42" height="42"/>
+        <text x="2006" y="737" class="heading center">Site B</text>
+        <text x="2006" y="764" class="small center">Data center</text>
+      </g>
+      <path d="M1614 559 H1646" class="local-link" data-link="edge-firewall-to-edge"/>
+      <path d="M1782 608 V632 H1558 V654" class="local-link" data-link="edge-to-hospital"/>
+      <path d="M1782 608 V654" class="local-link" data-link="edge-to-site-a"/>
+      <path d="M1782 632 H2006 V654" class="local-link" data-link="edge-to-site-b"/>
+      <text x="1788" y="798" class="compact center" style="fill:#245b87">ZAVA ON-PREMISES</text>
+    </g>
+
+    <g id="aws" data-node="true" data-boundary="true">
+      <rect x="2160" y="486" width="196" height="115" rx="10" fill="#fff7e9" stroke="#e1ac57" stroke-width="1.5"/>
+      <text x="2258" y="538" font-size="40" font-weight="700" class="center" fill="#26364b">AWS</text>
+      <path d="M2216 550 Q2258 571 2300 550" fill="none" stroke="#ed9800" stroke-width="4" stroke-linecap="round"/>
+      <text x="2258" y="587" class="small center">AWS cloud</text>
+    </g>
+
+    <g id="hybrid-links" aria-label="Azure-to-Edge VPN continuation, hosted firewall path and Edge-to-AWS VPN">
+      <circle cx="1830" cy="306" r="18" fill="#fff" stroke="#00966d" stroke-width="2.5"/>
+      <text x="1830" y="314" class="heading center" style="fill:#00765d">A</text>
+      <text x="1860" y="306" class="compact">ZAVA Azure - panel 1</text>
+      <path d="M1830 324 V510" class="vpn-link" data-link="azure-to-edge-vpn"/>
+      <text x="1856" y="386" class="compact" style="fill:#00765d">Site-to-site VPN</text>
+      <text x="1856" y="415" class="micro">Azure / Edge tunnel</text>
+      <path d="M1660 370 H1674" class="local-link" data-link="hosted-cogito-to-firewall"/>
+      <path d="M1708 406 V444 H1576 V532" class="local-link" data-link="hosted-firewall-to-edge-firewall"/>
+      <path d="M1918 559 H2160" class="vpn-link" data-link="edge-to-aws-vpn"/>
+      <text x="2039" y="532" class="micro center" style="fill:#00765d">Site-to-site VPN</text>
+    </g>
+  </g>
+
+  <g id="implementation-planning" aria-label="Five-stage planning overview derived from the original configuration list">
+    <rect x="24" y="854" width="1970" height="466" rx="12" fill="#f8fbff" stroke="#9ebde4" stroke-width="1.5"/>
+    <path d="M36 854 H1982 Q1994 854 1994 866 V928 H24 V866 Q24 854 36 854 Z" fill="url(#purple-ribbon)"/>
+    <text x="44" y="889" class="section-title">3. Implementation planning overview</text>
+    <text x="44" y="919" class="section-subtitle">Organize the source configuration items; validate assumptions before deployment</text>
+
+    <g id="stage-1" data-step="true">
+      <rect x="40" y="942" width="378" height="360" rx="10" fill="#edf6ff" stroke="#a9cde8" stroke-width="1.3"/>
+      <path d="M50 942 H408 Q418 942 418 952 V1014 H40 V952 Q40 942 50 942 Z" fill="url(#blue-ribbon)"/>
+      <circle cx="68" cy="977" r="19" fill="#fff"/>
+      <text x="68" y="985" class="heading center" style="fill:#0759ce">1</text>
+      <text x="99" y="970" class="step-heading">Establish</text>
+      <text x="99" y="998" class="step-heading">cross-tenant trust</text>
+      <text x="58" y="1050" class="step-owner" style="fill:#064e9e">Identity plane</text>
+      <text x="58" y="1088" class="step-body">&#8226; Plan Entra cross-tenant trust</text>
+      <text x="76" y="1116" class="step-body">between Epic and ZAVA.</text>
+      <text x="58" y="1154" class="step-body">&#8226; Identify ZAVA identities, groups</text>
+      <text x="76" y="1182" class="step-body">and service principals.</text>
+      <text x="58" y="1220" class="step-body">&#8226; Confirm the access model.</text>
+      <rect x="54" y="1260" width="350" height="28" rx="6" fill="#d8ebfd"/>
+      <text x="229" y="1281" class="micro center">Do not assume a specific trust mode</text>
+    </g>
+
+    <g id="stage-2" data-step="true">
+      <rect x="430" y="942" width="378" height="360" rx="10" fill="#eaf7f2" stroke="#99cbbb" stroke-width="1.3"/>
+      <path d="M440 942 H798 Q808 942 808 952 V1014 H430 V952 Q430 942 440 942 Z" fill="url(#teal-ribbon)"/>
+      <circle cx="458" cy="977" r="19" fill="#fff"/>
+      <text x="458" y="985" class="heading center" style="fill:#00765f">2</text>
+      <text x="489" y="970" class="step-heading">Prepare Azure</text>
+      <text x="489" y="998" class="step-heading">network foundations</text>
+      <text x="448" y="1050" class="step-owner" style="fill:#00634f">ZAVA Azure</text>
+      <text x="448" y="1088" class="step-body">&#8226; Establish the Azure subscription.</text>
+      <text x="448" y="1126" class="step-body">&#8226; Plan VNets and routing.</text>
+      <text x="448" y="1164" class="step-body">&#8226; Define firewall rules for</text>
+      <text x="466" y="1192" class="step-body">the illustrated connections.</text>
+      <text x="448" y="1230" class="step-body">&#8226; Preserve customer boundaries.</text>
+      <rect x="444" y="1260" width="350" height="28" rx="6" fill="#d3eee3"/>
+      <text x="619" y="1281" class="micro center">Subscription, VNets, routing and FW</text>
+    </g>
+
+    <g id="stage-3" data-step="true">
+      <rect x="820" y="942" width="378" height="360" rx="10" fill="#f3edfc" stroke="#c5b3e4" stroke-width="1.3"/>
+      <path d="M830 942 H1188 Q1198 942 1198 952 V1014 H820 V952 Q820 942 830 942 Z" fill="url(#purple-ribbon)"/>
+      <circle cx="848" cy="977" r="19" fill="#fff"/>
+      <text x="848" y="985" class="heading center" style="fill:#6331b7">3</text>
+      <text x="879" y="970" class="step-heading">Configure</text>
+      <text x="879" y="998" class="step-heading">endpoint access</text>
+      <text x="838" y="1050" class="step-owner" style="fill:#563099">Epic + ZAVA</text>
+      <text x="838" y="1088" class="step-body">&#8226; Plan Azure private endpoints</text>
+      <text x="856" y="1116" class="step-body">for the SQL endpoint path.</text>
+      <text x="838" y="1154" class="step-body">&#8226; Configure endpoint service</text>
+      <text x="856" y="1182" class="step-body">principals and access.</text>
+      <text x="838" y="1220" class="step-body">&#8226; Validate provider support.</text>
+      <rect x="834" y="1260" width="350" height="28" rx="6" fill="#e5dcf5"/>
+      <text x="1009" y="1281" class="micro center">Non-production and production</text>
+    </g>
+
+    <g id="stage-4" data-step="true">
+      <rect x="1210" y="942" width="378" height="360" rx="10" fill="#fff9e9" stroke="#dbc77c" stroke-width="1.3"/>
+      <path d="M1220 942 H1578 Q1588 942 1588 952 V1014 H1210 V952 Q1210 942 1220 942 Z" fill="url(#gold-ribbon)"/>
+      <circle cx="1238" cy="977" r="19" fill="#fff"/>
+      <text x="1238" y="985" class="heading center" style="fill:#927600">4</text>
+      <text x="1269" y="970" class="step-heading">Connect</text>
+      <text x="1269" y="998" class="step-heading">hybrid networks</text>
+      <text x="1228" y="1050" class="step-owner" style="fill:#7e6700">ZAVA Edge</text>
+      <text x="1228" y="1088" class="step-body">&#8226; Plan the Azure / Edge</text>
+      <text x="1246" y="1116" class="step-body">site-to-site VPN.</text>
+      <text x="1228" y="1154" class="step-body">&#8226; Retain the Epic-hosted</text>
+      <text x="1246" y="1182" class="step-body">firewall-to-firewall path.</text>
+      <text x="1228" y="1220" class="step-body">&#8226; Plan the Edge / AWS VPN.</text>
+      <rect x="1224" y="1260" width="350" height="28" rx="6" fill="#f4e9bf"/>
+      <text x="1399" y="1281" class="micro center">Two VPNs, separate hosted path</text>
+    </g>
+
+    <g id="stage-5" data-step="true">
+      <rect x="1600" y="942" width="378" height="360" rx="10" fill="#ecf9fc" stroke="#9bd4de" stroke-width="1.3"/>
+      <path d="M1610 942 H1968 Q1978 942 1978 952 V1014 H1600 V952 Q1600 942 1610 942 Z" fill="url(#cyan-ribbon)"/>
+      <circle cx="1628" cy="977" r="19" fill="#fff"/>
+      <text x="1628" y="985" class="heading center" style="fill:#0087a2">5</text>
+      <text x="1659" y="970" class="step-heading">Confirm access</text>
+      <text x="1659" y="998" class="step-heading">and reporting</text>
+      <text x="1618" y="1050" class="step-owner" style="fill:#007d94">Customer locations</text>
+      <text x="1618" y="1088" class="step-body">&#8226; Define Entra groups and roles.</text>
+      <text x="1618" y="1126" class="step-body">&#8226; Validate hospital and data-center</text>
+      <text x="1636" y="1154" class="step-body">paths through ZAVA Edge.</text>
+      <text x="1618" y="1192" class="step-body">&#8226; Confirm Cogito Report Viewer</text>
+      <text x="1636" y="1220" class="step-body">access; Power BI remains TBC.</text>
+      <rect x="1614" y="1260" width="350" height="28" rx="6" fill="#d4eef4"/>
+      <text x="1789" y="1281" class="micro center">Keep the source's open question</text>
+    </g>
+  </g>
+
+  <g id="configuration-checklist" aria-label="All seven new configuration elements listed in the source">
+    <rect x="2014" y="854" width="362" height="466" rx="12" fill="#edf3fa" stroke="#c3d4e9" stroke-width="1.4"/>
+    <use href="#shield" x="2034" y="872" width="34" height="34"/>
+    <text x="2080" y="898" font-size="24" font-weight="700">Configuration</text>
+    <text x="2038" y="934" class="small">Source checklist - not completion status</text>
+    <g id="config-cross-tenant-trust" data-config="true">
+      <circle cx="2048" cy="969" r="5" fill="#6331b7"/>
+      <text x="2066" y="976" class="compact">Entra cross-tenant trust</text>
+    </g>
+    <g id="config-subscription" data-config="true">
+      <circle cx="2048" cy="1019" r="5" fill="#0759ce"/>
+      <text x="2066" y="1026" class="compact">Azure subscription</text>
+    </g>
+    <g id="config-private-endpoints" data-config="true">
+      <circle cx="2048" cy="1069" r="5" fill="#008470"/>
+      <text x="2066" y="1076" class="compact">Azure private endpoints</text>
+    </g>
+    <g id="config-service-principals" data-config="true">
+      <circle cx="2048" cy="1119" r="5" fill="#6331b7"/>
+      <text x="2066" y="1126" class="compact">Endpoint service principals</text>
+    </g>
+    <g id="config-vnets-routing" data-config="true">
+      <circle cx="2048" cy="1169" r="5" fill="#008470"/>
+      <text x="2066" y="1176" class="compact">VNets &amp; routing</text>
+    </g>
+    <g id="config-firewall-rules" data-config="true">
+      <circle cx="2048" cy="1219" r="5" fill="#a58600"/>
+      <text x="2066" y="1226" class="compact">Firewall rules</text>
+    </g>
+    <g id="config-groups-roles" data-config="true">
+      <circle cx="2048" cy="1269" r="5" fill="#0098b7"/>
+      <text x="2066" y="1276" class="compact">Entra groups &amp; roles</text>
+    </g>
+  </g>
+
+  <g id="outcome" data-note="true" aria-label="Target architecture outcome">
+    <rect x="24" y="1340" width="1184" height="154" rx="13" fill="url(#green-wash)" stroke="#94cdb0" stroke-width="1.4"/>
+    <use href="#check" x="44" y="1358" width="48" height="48"/>
+    <text x="108" y="1376" font-size="27" font-weight="700" fill="#095a43">Target architecture</text>
+    <text x="108" y="1418" class="body">Bring Epic cloud access, ZAVA identities, private endpoints and hybrid links into one view.</text>
+    <text x="108" y="1453" class="body">Keep Epic Azure, Epic-hosted services, ZAVA on-premises and AWS visibly separate.</text>
+  </g>
+  <g id="scope-and-open-questions" data-note="true" aria-label="Conceptual scope and open questions">
+    <rect x="1228" y="1340" width="1148" height="154" rx="13" fill="#fff1f6" stroke="#e8a8c0" stroke-width="1.4"/>
+    <use href="#scope" x="1248" y="1358" width="48" height="48"/>
+    <text x="1312" y="1376" font-size="27" font-weight="700" fill="#a31a50">Scope and open questions</text>
+    <text x="1312" y="1418" class="body">Conceptual redraw: validate trust mode, endpoint support, permissions and routing.</text>
+    <text x="1312" y="1453" class="body">Power BI is unconfirmed in the source; the checklist does not imply completed setup.</text>
+  </g>
+
+  <g id="footer" aria-label="Legend and source attribution">
+    <rect x="0" y="1512" width="2400" height="64" fill="url(#blue-ribbon)"/>
+    <text x="1050" y="1553" font-size="27" font-weight="600" font-style="italic" class="white center">Connected platforms. Clear boundaries. One composite view.</text>
+    <text x="2350" y="1553" font-size="22" class="white" text-anchor="end">ZAVA | Epic | Azure | AWS</text>
+    <text x="32" y="1594" font-size="15" fill="#526683">Legend: dashed purple = trust; blue = SQL; green = VPN; slate = local / firewall path. No traffic direction implied.</text>
+    <text x="2368" y="1594" font-size="15" fill="#526683" text-anchor="end">Source author: Sam Cook | Source date: 2026-07-01 | Original PNG retained | v1</text>
+  </g>
+</svg>

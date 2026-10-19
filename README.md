@@ -49,6 +49,10 @@ automation or assumed success. No deployment or PHI processing has been performe
   alternate editable infographic inspired by the architecture-and-implementation
   sample, with paired logical/private-access panels and a five-stage overview.
   The original PNG and earlier SVG are retained unchanged.
+- [Scout-style customer composite architecture, v1](Customer-Composite-Architecure-Azure-AWS-v1.svg):
+  editable Azure/AWS and on-premises overview with five planning cards and the
+  source configuration checklist. The [original composite PNG](Customer-Composite-Architecure-Azure-AWS.png)
+  is retained unchanged; its Power BI question remains explicitly unconfirmed.
 - Root-level SVG/PNG diagrams and the readable `cogito-cloud-connectivity (1).pdf`:
   conceptual public/private connectivity, customer Fabric, and hybrid network context.
 
