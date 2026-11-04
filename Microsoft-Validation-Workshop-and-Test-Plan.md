@@ -5,7 +5,7 @@
 **Prepared:** October 15, 2026.  
 **Status:** Research-derived agenda and proposed acceptance plan. **Not Microsoft-approved; no tests executed.**  
 **Primary analysis:** [Cross-Tenant Authorization and MFA](./Cross-Tenant-Authorization-and-MFA.md).  
-**Diagram:** [Home-tenant enforcement and provider authorization](./04-cross-tenant-mfa-enforcement.svg).
+**Diagram:** [Home-tenant enforcement and provider authorization](./assets/diagrams/cross-tenant-access/04-cross-tenant-mfa-enforcement.svg).
 
 ## 1. Meeting objective
 

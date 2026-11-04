@@ -5,7 +5,7 @@
 **Research date:** October 15, 2026.  
 **Deployment labels:** ZAVA = proposed home/guest identity tenant; Epic = proposed provider/resource tenant. These labels reflect the proposed arrangement, not independently verified tenant ownership or configuration. ZAVA is a fictional organization label.
 
-**Related deliverables:** [Microsoft workshop and test plan](./Microsoft-Validation-Workshop-and-Test-Plan.md), [MFA enforcement diagram](./04-cross-tenant-mfa-enforcement.svg), and [earlier Fabric architecture report](./Fabric-Cogito-Cross-Tenant-Access.md).
+**Related deliverables:** [Microsoft workshop and test plan](./Microsoft-Validation-Workshop-and-Test-Plan.md), [MFA enforcement diagram](./assets/diagrams/cross-tenant-access/04-cross-tenant-mfa-enforcement.svg), and [earlier Fabric architecture report](./Fabric-Cogito-Cross-Tenant-Access.md).
 
 **Capture updated:** October 15, 2026. Section 11 consolidates the latest SQL/Cosmos cross-tenant MFA discussion with the earlier architecture research, diagrams, and Microsoft validation actions.
 
@@ -336,7 +336,7 @@ MFA is evaluated through the human's Entra authentication and applicable policie
 2. **This is an access relationship, not an AD forest trust.** The provider-specific consent and mapping workflow does not itself establish reciprocal access. Classic B2B can also be narrowly scoped and should not be described as inherently broad or bidirectional.[^fabric-guest][^fabric-provider][^b2b-trust]
 3. **Use "mapping/projection" rather than unverified "nesting."** Fabric documents provider-local groups/SPs and hourly group expansion, while the guest manages source membership. Literal cross-directory nesting and transitive-membership behavior still need confirmation.[^fabric-provider]
 4. **Separate authentication from data permission.** A successful home sign-in or mapping does not grant all SQL data. The proposed narrow pilot uses item `Read` and an approved-view `SELECT` grant; its detailed implementation remains in the [architecture report](./Fabric-Cogito-Cross-Tenant-Access.md).[^fabric-provider]
-5. **Keep the physical model and network caveat.** The earlier [physical deployment diagram](./02-physical-deployment.svg) distinguishes customer resource placement from Microsoft-operated Fabric SaaS. The [architecture report](./Fabric-Cogito-Cross-Tenant-Access.md), especially its Private Link discussion, retains the unresolved cross-tenant private-connectivity question; this MFA recap does not resolve it.
+5. **Keep the physical model and network caveat.** The earlier [physical deployment diagram](./assets/diagrams/cross-tenant-access/02-physical-deployment.svg) distinguishes customer resource placement from Microsoft-operated Fabric SaaS. The [architecture report](./Fabric-Cogito-Cross-Tenant-Access.md), especially its Private Link discussion, retains the unresolved cross-tenant private-connectivity question; this MFA recap does not resolve it.
 6. **Feature availability is asymmetric.** The guest article describes guest availability with limited providers; the provider article describes a limited preview. Do not represent the full provider workflow as unrestricted GA.[^fabric-guest][^fabric-provider]
 
 ### Conditional Access and release decision
@@ -359,10 +359,10 @@ The [Microsoft workshop and test plan](./Microsoft-Validation-Workshop-and-Test-
 | Existing artifact | What it preserves |
 |---|---|
 | [Original Fabric/Epic architecture research](./Fabric-Cogito-Cross-Tenant-Access.md) | Source-backed logical/physical architecture, conditional Epic mapping, practical implementation, API examples, Private Link gaps, and confidence assessment. |
-| [Tenant architecture diagram](./01-tenant-architecture.svg) | Guest/provider ownership, identity mapping, SQL access, and management-plane separation. |
-| [Physical deployment diagram](./02-physical-deployment.svg) | Guest network, logical directories, capacity example, and Microsoft-managed Fabric placement. |
-| [Implementation swimlane](./03-implementation-swimlane.svg) | Guest, provider, and service responsibilities from setup through validation. |
-| [MFA enforcement diagram](./04-cross-tenant-mfa-enforcement.svg) | Home authentication/CA, provider authorization, separate MFA gate, and validation gaps. |
+| [Tenant architecture diagram](./assets/diagrams/cross-tenant-access/01-tenant-architecture.svg) | Guest/provider ownership, identity mapping, SQL access, and management-plane separation. |
+| [Physical deployment diagram](./assets/diagrams/cross-tenant-access/02-physical-deployment.svg) | Guest network, logical directories, capacity example, and Microsoft-managed Fabric placement. |
+| [Implementation swimlane](./assets/diagrams/cross-tenant-access/03-implementation-swimlane.svg) | Guest, provider, and service responsibilities from setup through validation. |
+| [MFA enforcement diagram](./assets/diagrams/cross-tenant-access/04-cross-tenant-mfa-enforcement.svg) | Home authentication/CA, provider authorization, separate MFA gate, and validation gaps. |
 | [Microsoft workshop and test plan](./Microsoft-Validation-Workshop-and-Test-Plan.md) | Escalation roles, agenda, product questions, evidence worksheet, tests, and no-go conditions. |
 
 **Confidence remains unchanged:** documented platform behavior is distinguished from proposed design choices, unresolved product questions, and unverified deployment facts. No additional web research or live authentication testing was performed for this capture update.

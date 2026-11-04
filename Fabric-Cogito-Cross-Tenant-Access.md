@@ -23,9 +23,9 @@ The SVG drawings are self-contained vector images: they can be opened without a 
 
 | Artifact | Contents |
 |---|---|
-| [01-tenant-architecture.svg](./01-tenant-architecture.svg) | Two-tenant ownership, identity mapping, SQL request/result paths, and management-plane separation. |
-| [02-physical-deployment.svg](./02-physical-deployment.svg) | Guest network, Entra directories, an illustrative Azure F-capacity control resource, and Microsoft-managed regional Fabric compute/storage. |
-| [03-implementation-swimlane.svg](./03-implementation-swimlane.svg) | Guest, Fabric-service, and provider responsibilities from enrollment through least-privilege validation. |
+| [01-tenant-architecture.svg](./assets/diagrams/cross-tenant-access/01-tenant-architecture.svg) | Two-tenant ownership, identity mapping, SQL request/result paths, and management-plane separation. |
+| [02-physical-deployment.svg](./assets/diagrams/cross-tenant-access/02-physical-deployment.svg) | Guest network, Entra directories, an illustrative Azure F-capacity control resource, and Microsoft-managed regional Fabric compute/storage. |
+| [03-implementation-swimlane.svg](./assets/diagrams/cross-tenant-access/03-implementation-swimlane.svg) | Guest, Fabric-service, and provider responsibilities from enrollment through least-privilege validation. |
 | This report | Six editable Mermaid diagrams, implementation examples, API distinctions, operational timing, source references, and explicit uncertainties. |
 
 ---
