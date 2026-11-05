@@ -1,0 +1,4 @@
+.last-outputs.json
+.azure/
+.secrets/
+*.local.json

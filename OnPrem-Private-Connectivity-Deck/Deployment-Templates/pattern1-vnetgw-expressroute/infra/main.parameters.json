@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": { "value": "${AZURE_LOCATION}" },
+    "environment": { "value": "${ENV_SUFFIX}" },
+    "adminPassword": { "value": "${ONPREM_ADMIN_PASSWORD}" },
+    "sqlPassword": { "value": "${SQL_PASSWORD}" },
+    "vpnSharedKey": { "value": "${VPN_SHARED_KEY}" },
+    "fabricAdminUpns": { "value": [ "${FABRIC_ADMIN_UPN}" ] },
+    "fabricSku": { "value": "${FABRIC_SKU}" },
+    "deployerPrincipalId": { "value": "${DEPLOYER_OBJECT_ID}" },
+    "arcAccessToken": { "value": "${ARC_ACCESS_TOKEN}" },
+    "runBootstrap": { "value": "${RUN_BOOTSTRAP}" }
+  }
+}

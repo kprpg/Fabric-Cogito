@@ -1,0 +1,11 @@
+name: fabcn-p3
+metadata:
+  template: fabcn-p3-onprem-gateway
+infra:
+  provider: bicep
+  path: infra
+  module: main
+hooks:
+  postprovision:
+    shell: pwsh
+    run: azd env set RUN_BOOTSTRAP false

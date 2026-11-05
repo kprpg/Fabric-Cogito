@@ -1,0 +1,11 @@
+name: fabcn-p4
+metadata:
+  template: fabcn-p4-mpe-pls
+infra:
+  provider: bicep
+  path: infra
+  module: main
+hooks:
+  postprovision:
+    shell: pwsh
+    run: azd env set RUN_BOOTSTRAP false

@@ -1,0 +1,11 @@
+name: fabcn-p2
+metadata:
+  template: fabcn-p2-vnetgw-s2s-vpn
+infra:
+  provider: bicep
+  path: infra
+  module: main
+hooks:
+  postprovision:
+    shell: pwsh
+    run: azd env set RUN_BOOTSTRAP false

@@ -1,0 +1,11 @@
+name: fabcn-p1
+metadata:
+  template: fabcn-p1-vnetgw-expressroute
+infra:
+  provider: bicep
+  path: infra
+  module: main
+hooks:
+  postprovision:
+    shell: pwsh
+    run: azd env set RUN_BOOTSTRAP false
